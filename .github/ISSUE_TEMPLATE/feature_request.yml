@@ -1,0 +1,42 @@
+name: ✨ Nova funcionalidade
+description: Sugerir novas features ou melhorias de fluxo.
+title: "[FEAT] "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Conte aqui** a ideia, por que é importante e o impacto esperado.
+  - type: input
+    id: summary
+    attributes:
+      label: Resumo da proposta
+      placeholder: "Ex: permitir login via Google"
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivação por trás da feature
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Descrição da solução (UI, API, arquitetura)
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade
+      options:
+        - High
+        - Medium
+        - Low
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Outras abordagens consideradas
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impacto (usuários, performance, release)
