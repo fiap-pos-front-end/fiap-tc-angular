@@ -4,18 +4,18 @@
   <p-toolbar class="mb-6">
     <ng-template #start>
       <p-button
-        label="New"
+        label="Nova"
         icon="pi pi-plus"
         class="mr-2"
         (onClick)="openNew()"
       />
       <p-button
         severity="danger"
-        label="Delete"
+        label="Deletar"
         icon="pi pi-trash"
         outlined
         (onClick)="deleteSelectedProducts()"
-        [disabled]="!selectedProducts || !selectedProducts.length"
+        [disabled]="!selectedTransactions || !selectedTransactions.length"
       />
     </ng-template>
 
@@ -25,7 +25,7 @@
         <input
           pInputText
           type="text"
-          placeholder="Search..."
+          placeholder="Pesquisar..."
           (input)="dt.filterGlobal($any($event).target.value, 'contains')"
         />
       </p-iconfield>
@@ -33,15 +33,15 @@
         mode="basic"
         accept="image/*"
         [maxFileSize]="1000000"
-        label="Import"
-        chooseLabel="Import"
+        label="Importar"
+        chooseLabel="Importar"
         auto
         customUpload
         class="inline-block mr-2"
         [chooseButtonProps]="{ severity: 'secondary' }"
       />
       <p-button
-        label="Export"
+        label="Exportar"
         icon="pi pi-upload"
         severity="secondary"
         (onClick)="exportCSV()"
@@ -51,18 +51,13 @@
 
   <p-table
     #dt
-    [value]="products"
+    [value]="transactions"
     [rows]="10"
     [columns]="cols"
     [paginator]="true"
-    [globalFilterFields]="[
-      'name',
-      'country.name',
-      'representative.name',
-      'status'
-    ]"
+    [globalFilterFields]="['type', 'amount', 'date', 'category']"
     [tableStyle]="{ 'min-width': '75rem' }"
-    [(selection)]="selectedProducts"
+    [(selection)]="selectedTransactions"
     [rowHover]="true"
     dataKey="id"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} transações"
@@ -73,84 +68,63 @@
         <th style="width: 3rem">
           <p-tableHeaderCheckbox />
         </th>
-        <th style="min-width: 16rem">Code</th>
-        <th pSortableColumn="name" style="min-width: 16rem">
+        <th style="min-width: 3rem">#</th>
+        <th pSortableColumn="type" style="min-width: 10rem">
           <div class="flex gap-2 items-center">
-            Name
-            <p-sortIcon field="name" />
+            Tipo
+            <p-sortIcon field="type" />
           </div>
         </th>
-        <th>Image</th>
-        <th pSortableColumn="price" style="min-width: 8rem">
+        <th pSortableColumn="amount" style="min-width: 10rem">
           <div class="flex gap-2 items-center">
-            Price
-            <p-sortIcon field="price" />
+            Valor
+            <p-sortIcon field="amount" />
           </div>
         </th>
         <th pSortableColumn="category" style="min-width: 10rem">
           <div class="flex gap-2 items-center">
-            Category
+            Categoria
             <p-sortIcon field="category" />
           </div>
         </th>
-        <th pSortableColumn="rating" style="min-width: 12rem">
+        <th pSortableColumn="date" style="min-width: 12rem">
           <div class="flex gap-2 items-center">
-            Reviews
-            <p-sortIcon field="rating" />
-          </div>
-        </th>
-        <th pSortableColumn="inventoryStatus" style="min-width: 12rem">
-          <div class="flex gap-2 items-center">
-            Status
-            <p-sortIcon field="inventoryStatus" />
+            Data
+            <p-sortIcon field="date" />
           </div>
         </th>
         <th style="min-width: 12rem"></th>
       </tr>
     </ng-template>
-    <ng-template #body let-product>
+    <ng-template #body let-transaction>
       <tr>
         <td style="width: 3rem">
-          <p-tableCheckbox [value]="product" />
+          <p-tableCheckbox [value]="transaction" />
         </td>
-        <td style="min-width: 12rem">{{ product.code }}</td>
-        <td style="min-width: 16rem">{{ product.name }}</td>
-        <td>
-          <img
-            [src]="
-              'https://primefaces.org/cdn/primeng/images/demo/product/' +
-              product.image
-            "
-            [alt]="product.name"
-            style="width: 64px"
-            class="rounded"
-          />
-        </td>
-        <td>{{ product.price | currency : "USD" }}</td>
-        <td>{{ product.category }}</td>
-        <td>
-          <p-rating [(ngModel)]="product.rating" [readonly]="true" />
-        </td>
+        <td style="min-width: 3rem">{{ transaction.id }}</td>
         <td>
           <p-tag
-            [value]="product.inventoryStatus"
-            [severity]="getSeverity(product.inventoryStatus)"
+            [value]="transaction.type"
+            [severity]="getTransactionTypeColor(transaction.type)"
           />
         </td>
+        <td>{{ transaction.amount | currency : "BRL" }}</td>
+        <td>{{ transaction.category | titlecase }}</td>
+        <td>{{ transaction.date | date : "dd/MM/yyyy HH:mm" }}</td>
         <td>
           <p-button
             icon="pi pi-pencil"
             class="mr-2"
             [rounded]="true"
             [outlined]="true"
-            (click)="editProduct(product)"
+            (click)="editTransaction(transaction)"
           />
           <p-button
             icon="pi pi-trash"
             severity="danger"
             [rounded]="true"
             [outlined]="true"
-            (click)="deleteProduct(product)"
+            (click)="deleteTransaction(transaction)"
           />
         </td>
       </tr>

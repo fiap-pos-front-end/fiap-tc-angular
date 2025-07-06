@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Product } from '@fiap-tc-angular/models';
+import { Product, Transaction, TransactionType } from '@fiap-tc-angular/models';
 import { ProductService } from '@fiap-tc-angular/services';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -34,6 +34,27 @@ interface ExportColumn {
 })
 export class TransactionsListComponent implements OnInit {
   productDialog: boolean = false;
+
+  transactions: Transaction[] = [
+    {
+      id: '1',
+      type: TransactionType.INCOME,
+      amount: 100,
+      date: new Date(),
+      category: 'Salário',
+    },
+    {
+      id: '2',
+      type: TransactionType.EXPENSE,
+      amount: 200,
+      date: new Date(),
+      category: 'alimentação',
+    },
+  ];
+
+  transaction!: Transaction;
+
+  selectedTransactions!: Transaction[] | null;
 
   products!: Product[];
 
@@ -79,11 +100,11 @@ export class TransactionsListComponent implements OnInit {
     ];
 
     this.cols = [
-      { field: 'code', header: 'Code', customExportHeader: 'Product Code' },
-      { field: 'name', header: 'Name' },
-      { field: 'image', header: 'Image' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
+      { field: 'id', header: '#', customExportHeader: 'ID da Transação' },
+      { field: 'type', header: 'Tipo' },
+      { field: 'date', header: 'Data' },
+      { field: 'amount', header: 'Valor' },
+      { field: 'category', header: 'Categoria' },
     ];
 
     this.exportColumns = this.cols.map((col) => ({
@@ -98,34 +119,35 @@ export class TransactionsListComponent implements OnInit {
     this.productDialog = true;
   }
 
-  editProduct(product: Product) {
+  editTransaction(product: Product) {
     this.product = { ...product };
     this.productDialog = true;
   }
 
   deleteSelectedProducts() {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected products?',
-      header: 'Confirm',
+      message:
+        'Você tem certeza que deseja deletar as transações selecionadas?',
+      header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
-        label: 'No',
+        label: 'Não',
         severity: 'secondary',
         variant: 'text',
       },
       acceptButtonProps: {
         severity: 'danger',
-        label: 'Yes',
+        label: 'Sim',
       },
       accept: () => {
-        this.products = this.products.filter(
-          (val) => !this.selectedProducts?.includes(val)
+        this.transactions = this.transactions.filter(
+          (val) => !this.selectedTransactions?.includes(val)
         );
-        this.selectedProducts = null;
+        this.selectedTransactions = null;
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
-          detail: 'Products Deleted',
+          summary: 'Sucesso',
+          detail: 'Transações Deletadas',
           life: 3000,
         });
       },
@@ -137,27 +159,32 @@ export class TransactionsListComponent implements OnInit {
     this.submitted = false;
   }
 
-  deleteProduct(product: Product) {
+  deleteTransaction(transaction: Transaction) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete ' + product.name + '?',
-      header: 'Confirm',
+      message:
+        'Você tem certeza que deseja deletar a transação #' +
+        transaction.id +
+        '?',
+      header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
-        label: 'No',
+        label: 'Não',
         severity: 'secondary',
         variant: 'text',
       },
       acceptButtonProps: {
         severity: 'danger',
-        label: 'Yes',
+        label: 'Sim',
       },
       accept: () => {
-        this.products = this.products.filter((val) => val.id !== product.id);
-        this.product = {};
+        this.transactions = this.transactions.filter(
+          (val) => val.id !== transaction.id
+        );
+        // this.transaction = {};
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Deleted',
+          summary: 'Sucesso',
+          detail: 'Transação Deletada',
           life: 3000,
         });
       },
@@ -186,13 +213,11 @@ export class TransactionsListComponent implements OnInit {
     return id;
   }
 
-  getSeverity(status: string) {
-    switch (status) {
-      case 'INSTOCK':
+  getTransactionTypeColor(type: TransactionType) {
+    switch (type) {
+      case TransactionType.INCOME:
         return 'success';
-      case 'LOWSTOCK':
-        return 'warn';
-      case 'OUTOFSTOCK':
+      case TransactionType.EXPENSE:
         return 'danger';
       default:
         return 'info';
