@@ -3,19 +3,11 @@
     [value]="transactions"
     [paginator]="true"
     [rows]="10"
-    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowHover]="true"
     [rowsPerPageOptions]="[10, 20, 50]"
   >
     <ng-template #header>
       <tr>
-        <!--
-        TODO: Eu vou fazer essa coluna ser ordenável, mas por agora, o estilo não está funcionando
-        <th pSortableColumn="id" style="width: 4%">
-          <div class="flex gap-2 items-center">
-            #
-            <p-sortIcon field="id" class="border-2 border-red-500 h-xs" />
-          </div>
-        </th> -->
         <th style="width: 4%">#</th>
         <th style="width: 22%">Tipo</th>
         <th style="width: 22%">Valor</th>
