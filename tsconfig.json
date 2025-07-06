@@ -17,7 +17,8 @@
     "module": "ES2022",
     "paths": {
       "@fiap-tc-angular/components": ["./src/app/shared/components/index.ts"],
-      "@fiap-tc-angular/models": ["./src/app/shared/models/index.ts"]
+      "@fiap-tc-angular/models": ["./src/app/shared/models/index.ts"],
+      "@fiap-tc-angular/services": ["./src/app/shared/services/index.ts"]
     }
   },
   "angularCompilerOptions": {
