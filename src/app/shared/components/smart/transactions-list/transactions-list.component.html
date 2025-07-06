@@ -1,0 +1,38 @@
+<div class="card">
+  <p-table
+    [value]="transactions"
+    [paginator]="true"
+    [rows]="10"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowsPerPageOptions]="[10, 20, 50]"
+  >
+    <ng-template #header>
+      <tr>
+        <!--
+        TODO: Eu vou fazer essa coluna ser ordenável, mas por agora, o estilo não está funcionando
+        <th pSortableColumn="id" style="width: 4%">
+          <div class="flex gap-2 items-center">
+            #
+            <p-sortIcon field="id" class="border-2 border-red-500 h-xs" />
+          </div>
+        </th> -->
+        <th style="width: 4%">#</th>
+        <th style="width: 22%">Tipo</th>
+        <th style="width: 22%">Valor</th>
+        <th style="width: 22%">Data</th>
+        <th style="width: 22%">Categoria</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-transaction>
+      <tr>
+        <td>{{ transaction.id }}</td>
+        <td>{{ transaction.type | titlecase }}</td>
+        <td>
+          {{ transaction.amount | currency : "BRL" }}
+        </td>
+        <td>{{ transaction.date | date : "dd/MM/yyyy HH:mm" }}</td>
+        <td>{{ transaction.category | titlecase }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
