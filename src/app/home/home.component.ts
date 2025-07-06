@@ -12,7 +12,13 @@ import { SharedService } from 'mfeShell/lib-shared';
 export class HomeComponent {
   private router = inject(Router);
   private shared: any = inject(SharedService);
+
   helloShared = this.shared.getHello();
+
+  goToTransactions() {
+    this.router.navigate(['/angular/transferencias']);
+  }
+
   goToAngular2() {
     this.router.navigate(['/angular/home2']);
   }
