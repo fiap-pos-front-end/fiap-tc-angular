@@ -8,7 +8,6 @@ export class Transaction {
     private readonly _amount: Money,
     private readonly _date: Date,
     private readonly _category: string,
-    private readonly _description?: string,
   ) {
     this.validateTransaction();
   }
@@ -25,15 +24,8 @@ export class Transaction {
     }
   }
 
-  public static create(
-    id: string,
-    type: TransactionType,
-    amount: number,
-    date: Date,
-    category: string,
-    description?: string,
-  ): Transaction {
-    return new Transaction(id, type, Money.from(amount), date, category, description);
+  public static create(id: string, type: TransactionType, amount: number, date: Date, category: string): Transaction {
+    return new Transaction(id, type, Money.from(amount), date, category);
   }
 
   // Getters
@@ -57,10 +49,6 @@ export class Transaction {
     return this._category;
   }
 
-  get description(): string | undefined {
-    return this._description;
-  }
-
   // Domain methods
   public isExpense(): boolean {
     return this._type === TransactionType.EXPENSE;
@@ -82,7 +70,6 @@ export class Transaction {
       amount: this._amount.getValue(),
       date: this._date,
       category: this._category,
-      description: this._description,
     };
   }
 }

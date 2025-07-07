@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
+import { ITransactionRepository, Transaction } from '@fiap-tc-angular/core/domain';
 import { Observable, of } from 'rxjs';
-import { Transaction } from '../../core/domain/models/transaction.model';
-import { ITransactionRepository } from '../../core/domain/repositories/transaction.repository';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +18,7 @@ export class LocalStorageTransactionRepository implements ITransactionRepository
 
     const data = JSON.parse(stored);
     return data.map((item: any) =>
-      Transaction.create(item.id, item.type, item.amount, new Date(item.date), item.category, item.description),
+      Transaction.create(item.id, item.type, item.amount, new Date(item.date), item.category),
     );
   }
 
