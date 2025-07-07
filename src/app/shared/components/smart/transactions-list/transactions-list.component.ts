@@ -8,6 +8,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { Product } from '../../../models';
+import { TransactionFormComponent } from '../../presentational/transaction-form/transaction-form.component';
 import { ImportsModule } from './imports';
 import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
 
@@ -24,7 +25,7 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-transactions-list',
-  imports: [ImportsModule, CommonModule, TransactionsListHeaderToolbarComponent],
+  imports: [ImportsModule, CommonModule, TransactionsListHeaderToolbarComponent, TransactionFormComponent],
   providers: [
     MessageService,
     ConfirmationService,
@@ -40,8 +41,6 @@ export class TransactionsListComponent implements OnInit {
   private productService = inject(ProductService); // TODO: Remover porque foi MVP
   private messageService = inject(MessageService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
-
-  readonly transactionTypes: TransactionType[] = Object.values(TransactionType);
 
   newTransactionDialog: boolean = false;
   selectedTransactions: Transaction[] = [];
