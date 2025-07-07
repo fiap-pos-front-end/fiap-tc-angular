@@ -9,6 +9,7 @@ import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { Product } from '../../../models';
 import { ImportsModule } from './imports';
+import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
 
 interface Column {
   field: string;
@@ -23,7 +24,7 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-transactions-list',
-  imports: [ImportsModule, CommonModule],
+  imports: [ImportsModule, CommonModule, TransactionsListHeaderToolbarComponent],
   providers: [
     MessageService,
     ConfirmationService,
@@ -33,21 +34,11 @@ interface ExportColumn {
     AsyncPipe,
   ],
   templateUrl: './transactions-list.component.html',
-  styles: [
-    `
-      :host ::ng-deep .p-dialog .product-image {
-        width: 150px;
-        margin: 0 auto 2rem auto;
-        display: block;
-      }
-    `,
-  ],
 })
 export class TransactionsListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private productService = inject(ProductService); // TODO: Remover porque foi MVP
   private messageService = inject(MessageService);
-  private confirmationService = inject(ConfirmationService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
   readonly transactionTypes: TransactionType[] = Object.values(TransactionType);
@@ -118,66 +109,37 @@ export class TransactionsListComponent implements OnInit {
     this.newTransactionDialog = true;
   }
 
-  deleteSelectedProducts() {
-    this.confirmationService.confirm({
-      message: 'Você tem certeza que deseja deletar as transações selecionadas?',
-      header: 'Confirmar',
-      icon: 'pi pi-exclamation-triangle',
-      rejectButtonProps: {
-        label: 'Não',
-        severity: 'secondary',
-        variant: 'text',
-      },
-      acceptButtonProps: {
-        severity: 'danger',
-        label: 'Sim',
-      },
-      accept: () => {
-        // TODO: [MESMA COISA] aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
-        // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
-        // this.selectedTransactions = null;
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Transações Deletadas',
-          life: 3000,
-        });
-      },
-    });
-  }
-
   hideDialog() {
     this.newTransactionDialog = false;
     this.submitted = false;
   }
 
   deleteTransaction(transaction: Transaction) {
-    this.confirmationService.confirm({
-      message: 'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
-      header: 'Confirmar',
-      icon: 'pi pi-exclamation-triangle',
-      rejectButtonProps: {
-        label: 'Não',
-        severity: 'secondary',
-        variant: 'text',
-      },
-      acceptButtonProps: {
-        severity: 'danger',
-        label: 'Sim',
-      },
-      accept: () => {
-        // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
-        // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
-        // this.transaction = {};
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Transação Deletada',
-          life: 3000,
-        });
-      },
-    });
+    // this.confirmationService.confirm({
+    //   message: 'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
+    //   header: 'Confirmar',
+    //   icon: 'pi pi-exclamation-triangle',
+    //   rejectButtonProps: {
+    //     label: 'Não',
+    //     severity: 'secondary',
+    //     variant: 'text',
+    //   },
+    //   acceptButtonProps: {
+    //     severity: 'danger',
+    //     label: 'Sim',
+    //   },
+    //   accept: () => {
+    //     // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
+    //     // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
+    //     // this.transaction = {};
+    //     this.messageService.add({
+    //       severity: 'success',
+    //       summary: 'Sucesso',
+    //       detail: 'Transação Deletada',
+    //       life: 3000,
+    //     });
+    //   },
+    // });
   }
 
   findIndexById(id: string): number {
