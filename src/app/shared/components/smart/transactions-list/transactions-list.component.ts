@@ -1,9 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Product, Transaction, TransactionType } from '@fiap-tc-angular/models';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
+import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { inMemoryTransactionProvider } from '@fiap-tc-angular/infrastructure';
 import { ProductService } from '@fiap-tc-angular/services';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { Observable } from 'rxjs';
+import { Product } from '../../../models';
 import { ImportsModule } from './imports';
 
 interface Column {
@@ -20,7 +24,14 @@ interface ExportColumn {
 @Component({
   selector: 'app-transactions-list',
   imports: [ImportsModule, CommonModule],
-  providers: [MessageService, ConfirmationService, ProductService],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    ManageTransactionsUseCaseService,
+    ProductService,
+    inMemoryTransactionProvider,
+    AsyncPipe,
+  ],
   templateUrl: './transactions-list.component.html',
   styles: [
     `
@@ -33,28 +44,20 @@ interface ExportColumn {
   ],
 })
 export class TransactionsListComponent implements OnInit {
-  productDialog: boolean = false;
+  private cdr = inject(ChangeDetectorRef);
+  private productService = inject(ProductService); // TODO: Remover porque foi MVP
+  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
+  private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
-  transactions: Transaction[] = [
-    {
-      id: '1',
-      type: TransactionType.INCOME,
-      amount: 100,
-      date: new Date(),
-      category: 'Salário',
-    },
-    {
-      id: '2',
-      type: TransactionType.EXPENSE,
-      amount: 200,
-      date: new Date(),
-      category: 'alimentação',
-    },
-  ];
+  readonly transactionTypes: TransactionType[] = Object.values(TransactionType);
 
+  newTransactionDialog: boolean = false;
+  selectedTransactions: Transaction[] = [];
   transaction!: Transaction;
+  transactions$: Observable<Transaction[]> = new Observable<Transaction[]>();
 
-  selectedTransactions!: Transaction[] | null;
+  // ---- Começar revisão daqui ----
 
   products!: Product[];
 
@@ -64,40 +67,31 @@ export class TransactionsListComponent implements OnInit {
 
   submitted: boolean = false;
 
-  statuses!: any[];
-
   @ViewChild('dt') dt!: Table;
 
   cols!: Column[];
 
   exportColumns!: ExportColumn[];
+  // ---- Acabar revisão aqui ----
 
-  constructor(
-    private productService: ProductService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private cd: ChangeDetectorRef
-  ) {}
+  ngOnInit() {
+    this.loadTransactions();
+    this.loadDemoData();
+  }
+
+  private loadTransactions(): void {
+    this.transactions$ = this.manageTransactionsUseCase.getAllTransactions();
+  }
 
   exportCSV() {
     this.dt.exportCSV();
   }
 
-  ngOnInit() {
-    this.loadDemoData();
-  }
-
   loadDemoData() {
     this.productService.getProducts().then((data) => {
       this.products = data;
-      this.cd.markForCheck();
+      this.cdr.markForCheck();
     });
-
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' },
-    ];
 
     this.cols = [
       { field: 'id', header: '#', customExportHeader: 'ID da Transação' },
@@ -116,18 +110,17 @@ export class TransactionsListComponent implements OnInit {
   openNew() {
     this.product = {};
     this.submitted = false;
-    this.productDialog = true;
+    this.newTransactionDialog = true;
   }
 
   editTransaction(product: Product) {
     this.product = { ...product };
-    this.productDialog = true;
+    this.newTransactionDialog = true;
   }
 
   deleteSelectedProducts() {
     this.confirmationService.confirm({
-      message:
-        'Você tem certeza que deseja deletar as transações selecionadas?',
+      message: 'Você tem certeza que deseja deletar as transações selecionadas?',
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
@@ -140,10 +133,10 @@ export class TransactionsListComponent implements OnInit {
         label: 'Sim',
       },
       accept: () => {
-        this.transactions = this.transactions.filter(
-          (val) => !this.selectedTransactions?.includes(val)
-        );
-        this.selectedTransactions = null;
+        // TODO: [MESMA COISA] aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
+        // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
+        // this.selectedTransactions = null;
+
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -155,16 +148,13 @@ export class TransactionsListComponent implements OnInit {
   }
 
   hideDialog() {
-    this.productDialog = false;
+    this.newTransactionDialog = false;
     this.submitted = false;
   }
 
   deleteTransaction(transaction: Transaction) {
     this.confirmationService.confirm({
-      message:
-        'Você tem certeza que deseja deletar a transação #' +
-        transaction.id +
-        '?',
+      message: 'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
@@ -177,9 +167,8 @@ export class TransactionsListComponent implements OnInit {
         label: 'Sim',
       },
       accept: () => {
-        this.transactions = this.transactions.filter(
-          (val) => val.id !== transaction.id
-        );
+        // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
+        // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
         // this.transaction = {};
         this.messageService.add({
           severity: 'success',
@@ -205,8 +194,7 @@ export class TransactionsListComponent implements OnInit {
 
   createId(): string {
     let id = '';
-    var chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (var i = 0; i < 5; i++) {
       id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -224,7 +212,7 @@ export class TransactionsListComponent implements OnInit {
     }
   }
 
-  saveProduct() {
+  saveTransaction() {
     this.submitted = true;
 
     if (this.product.name?.trim()) {
@@ -237,6 +225,7 @@ export class TransactionsListComponent implements OnInit {
           life: 3000,
         });
       } else {
+        // TODO: aqui estaria certo usar o uuid diretamente?
         this.product.id = this.createId();
         this.product.image = 'product-placeholder.svg';
         this.products.push(this.product);
@@ -249,7 +238,7 @@ export class TransactionsListComponent implements OnInit {
       }
 
       this.products = [...this.products];
-      this.productDialog = false;
+      this.newTransactionDialog = false;
       this.product = {};
     }
   }
