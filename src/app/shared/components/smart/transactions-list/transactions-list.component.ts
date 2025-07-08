@@ -9,7 +9,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { TransactionFormComponent } from '../../presentational/transaction-form/transaction-form.component';
-import { ImportsModule } from './imports';
+import { PRIMENG_MODULES } from './imports';
 import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
 
 interface Column {
@@ -26,12 +26,12 @@ interface ExportColumn {
 @Component({
   selector: 'app-transactions-list',
   imports: [
-    ImportsModule,
     CommonModule,
     TransactionsListHeaderToolbarComponent,
     TransactionFormComponent,
     ConfirmDialogModule,
     ConfirmPopupModule,
+    ...PRIMENG_MODULES,
   ],
   providers: [
     MessageService,
