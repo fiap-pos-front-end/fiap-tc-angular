@@ -30,6 +30,7 @@ export class TransactionsListHeaderToolbarComponent {
   readonly selectedTransactions: InputSignal<Transaction[]> = input.required<Transaction[]>();
 
   readonly onNewTransactionClicked = output<void>();
+  readonly onDeleteSelectedTransactionsClicked = output<void>();
   readonly onExportCsvClicked = output<void>();
 
   onNewTransactionClick() {
@@ -37,41 +38,10 @@ export class TransactionsListHeaderToolbarComponent {
   }
 
   onDeleteSelectedTransactionsClick() {
-    this.deleteSelectedTransactions();
+    this.onDeleteSelectedTransactionsClicked.emit();
   }
 
   onExportCsvClick() {
     this.onExportCsvClicked.emit();
-  }
-
-  // TODO: Criar um EventEmitter para deletar as transações selecionadas
-  private deleteSelectedTransactions() {
-    this.confirmationService.confirm({
-      message: 'Você tem certeza que deseja deletar as transações selecionadas?',
-      header: 'Confirmar',
-      icon: 'pi pi-exclamation-triangle',
-      rejectButtonProps: {
-        label: 'Não',
-        severity: 'secondary',
-        variant: 'text',
-      },
-      acceptButtonProps: {
-        severity: 'danger',
-        label: 'Sim',
-      },
-      accept: () => {
-        // TODO: [MESMA COISA] aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
-        // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
-        // this.selectedTransactions = null;
-        // ------------------------------------------------------------
-        // TODO: Emitir um evento para exibir o toast
-        // this.messageService.add({
-        //   severity: 'success',
-        //   summary: 'Sucesso',
-        //   detail: 'Transações Deletadas',
-        //   life: 3000,
-        // });
-      },
-    });
   }
 }

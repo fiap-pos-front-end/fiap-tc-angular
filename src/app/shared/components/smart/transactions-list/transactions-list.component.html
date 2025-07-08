@@ -5,6 +5,7 @@
     <app-transactions-list-header-toolbar
       [selectedTransactions]="selectedTransactions"
       (onNewTransactionClicked)="onNewTransactionClicked()"
+      (onDeleteSelectedTransactionsClicked)="deleteMultipleTransactions()"
       (onExportCsvClicked)="onExportCsvClicked()"
     />
 
