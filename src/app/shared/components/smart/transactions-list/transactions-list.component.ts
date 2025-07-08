@@ -115,6 +115,10 @@ export class TransactionsListComponent implements OnInit {
     // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
   }
 
+  onSearchInput(event: Event) {
+    this.dt.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
   onExportCsvClicked() {
     this.dt.exportCSV();
   }

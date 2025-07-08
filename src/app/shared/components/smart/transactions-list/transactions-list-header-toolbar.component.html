@@ -14,10 +14,7 @@
   <ng-template #end>
     <p-iconfield class="mr-2">
       <p-inputicon class="pi pi-search" />
-
-      <!-- TODO: Emitir um evento que emita a busca do usuário e aplicar debounce -->
-      <!-- (input)="dt.filterGlobal($any($event).target.value, 'contains')" -->
-      <input pInputText type="text" placeholder="Pesquisar..." />
+      <input pInputText type="text" placeholder="Pesquisar..." (input)="onSearchInput.emit($event)" />
     </p-iconfield>
     <p-fileUpload
       mode="basic"

@@ -6,6 +6,7 @@
       [selectedTransactions]="selectedTransactions"
       (onNewTransactionClicked)="openNewTransactionDialog()"
       (onDeleteSelectedTransactionsClicked)="deleteMultipleTransactions()"
+      (onSearchInput)="onSearchInput($event)"
       (onExportCsvClicked)="onExportCsvClicked()"
     />
 

@@ -18,6 +18,7 @@ export class TransactionsListHeaderToolbarComponent {
   readonly onNewTransactionClicked = output<void>();
   readonly onDeleteSelectedTransactionsClicked = output<void>();
   readonly onExportCsvClicked = output<void>();
+  readonly onSearchInput = output<Event>();
 
   onNewTransactionClick() {
     this.onNewTransactionClicked.emit();
