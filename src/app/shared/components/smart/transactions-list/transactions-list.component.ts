@@ -1,15 +1,13 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { inMemoryTransactionProvider } from '@fiap-tc-angular/infrastructure';
-import { ProductService } from '@fiap-tc-angular/services';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
-import { Product } from '../../../models';
 import { TransactionFormComponent } from '../../presentational/transaction-form/transaction-form.component';
 import { ImportsModule } from './imports';
 import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
@@ -39,7 +37,6 @@ interface ExportColumn {
     MessageService,
     ConfirmationService,
     ManageTransactionsUseCaseService,
-    ProductService,
     inMemoryTransactionProvider,
     AsyncPipe,
   ],
@@ -57,7 +54,7 @@ export class TransactionsListComponent implements OnInit {
   exportColumns!: ExportColumn[];
   @ViewChild('dt') dt!: Table;
   selectedTransactions: Transaction[] = [];
-  transaction!: Transaction;
+  transaction: WritableSignal<Transaction> = signal<Transaction>(Transaction.reset());
   transactions$: Observable<Transaction[]> = new Observable<Transaction[]>();
 
   ngOnInit() {
@@ -105,7 +102,7 @@ export class TransactionsListComponent implements OnInit {
   }
 
   openNewTransactionDialog() {
-    this.transaction = Transaction.reset();
+    this.transaction.set(Transaction.reset());
     // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
     this.newTransactionDialog = true;
   }
@@ -134,6 +131,38 @@ export class TransactionsListComponent implements OnInit {
     }
   }
 
+  editTransaction(transaction: Transaction) {
+    // TODO: corrigir a exibição do tipo da transação no form
+    this.transaction.set(transaction);
+    this.newTransactionDialog = true;
+  }
+
+  saveTransaction() {
+    this.submitted = true;
+
+    if (this.transaction().amount.value <= 0) {
+      // TODO: talvez exibir mensagem de erro aqui? Pq já tem uma no form
+      // this.messageService.add({
+      //   severity: 'error',
+      //   summary: 'Erro',
+      //   detail: 'O valor da transação não pode ser zero ou negativo',
+      // });
+
+      return;
+    }
+
+    if (this.transaction().id) {
+      // TODO: atualizar transação
+    } else {
+      // TODO: aqui estaria certo usar o uuid diretamente? Eu penso que isso é contra as regras do SOLID
+      // TODO: criar transação
+    }
+
+    // this.transactions = [...this.transactions];
+    this.newTransactionDialog = false;
+    this.transaction.set(Transaction.reset());
+  }
+
   deleteTransaction(transaction: Transaction) {
     this.createConfirmationDialog('Você tem certeza que deseja deletar a transação #' + transaction.id + '?', () => {
       // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
@@ -148,72 +177,5 @@ export class TransactionsListComponent implements OnInit {
       // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
       // this.selectedTransactions = null;
     });
-  }
-
-  // ---- Começar revisão daqui ----
-
-  products!: Product[];
-
-  product!: Product;
-
-  selectedProducts!: Product[] | null;
-
-  // ---- Acabar revisão aqui ----
-
-  editTransaction(product: Product) {
-    this.product = { ...product };
-    this.newTransactionDialog = true;
-  }
-
-  findIndexById(id: string): number {
-    let index = -1;
-    for (let i = 0; i < this.products.length; i++) {
-      if (this.products[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
-  createId(): string {
-    let id = '';
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (var i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  }
-
-  saveTransaction() {
-    this.submitted = true;
-
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        this.products[this.findIndexById(this.product.id)] = this.product;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Updated',
-          life: 3000,
-        });
-      } else {
-        // TODO: aqui estaria certo usar o uuid diretamente?
-        this.product.id = this.createId();
-        this.product.image = 'product-placeholder.svg';
-        this.products.push(this.product);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
-          life: 3000,
-        });
-      }
-
-      this.products = [...this.products];
-      this.newTransactionDialog = false;
-      this.product = {};
-    }
   }
 }

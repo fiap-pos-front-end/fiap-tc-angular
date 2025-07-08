@@ -99,8 +99,6 @@ import { TreeModule } from 'primeng/tree';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { TreeTableModule } from 'primeng/treetable';
 
-import { ProductService } from '@fiap-tc-angular/services';
-
 @NgModule({
   imports: [
     AvatarModule,
@@ -302,6 +300,5 @@ import { ProductService } from '@fiap-tc-angular/services';
     AutoFocusModule,
     OverlayBadgeModule,
   ],
-  providers: [ProductService],
 })
 export class ImportsModule {}
