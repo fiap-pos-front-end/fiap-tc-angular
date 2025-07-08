@@ -7,7 +7,7 @@
       icon="pi pi-trash"
       outlined
       (onClick)="onDeleteSelectedTransactionsClick()"
-      [disabled]="!selectedTransactions || !selectedTransactions.length"
+      [disabled]="!selectedTransactions() || !selectedTransactions().length"
     />
   </ng-template>
 

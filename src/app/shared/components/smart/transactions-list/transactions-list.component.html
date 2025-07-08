@@ -4,7 +4,7 @@
 
     <app-transactions-list-header-toolbar
       [selectedTransactions]="selectedTransactions"
-      (onNewTransactionClicked)="onNewTransactionClicked()"
+      (onNewTransactionClicked)="openNewTransactionDialog()"
       (onDeleteSelectedTransactionsClicked)="deleteMultipleTransactions()"
       (onExportCsvClicked)="onExportCsvClicked()"
     />
@@ -77,7 +77,7 @@
       </ng-template>
 
       <ng-template #footer>
-        <p-button label="Cancelar" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Cancelar" icon="pi pi-times" text (click)="hideNewTransactionDialog()" />
         <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
       </ng-template>
     </p-dialog>

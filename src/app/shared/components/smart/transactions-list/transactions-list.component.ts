@@ -5,6 +5,8 @@ import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { inMemoryTransactionProvider } from '@fiap-tc-angular/infrastructure';
 import { ProductService } from '@fiap-tc-angular/services';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { Product } from '../../../models';
@@ -25,7 +27,14 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-transactions-list',
-  imports: [ImportsModule, CommonModule, TransactionsListHeaderToolbarComponent, TransactionFormComponent],
+  imports: [
+    ImportsModule,
+    CommonModule,
+    TransactionsListHeaderToolbarComponent,
+    TransactionFormComponent,
+    ConfirmDialogModule,
+    ConfirmPopupModule,
+  ],
   providers: [
     MessageService,
     ConfirmationService,
@@ -95,10 +104,15 @@ export class TransactionsListComponent implements OnInit {
     });
   }
 
-  onNewTransactionClicked() {
+  openNewTransactionDialog() {
     this.transaction = Transaction.reset();
-    this.submitted = false;
+    // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
     this.newTransactionDialog = true;
+  }
+
+  hideNewTransactionDialog() {
+    this.newTransactionDialog = false;
+    // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
   }
 
   onExportCsvClicked() {
@@ -145,11 +159,6 @@ export class TransactionsListComponent implements OnInit {
   editTransaction(product: Product) {
     this.product = { ...product };
     this.newTransactionDialog = true;
-  }
-
-  hideDialog() {
-    this.newTransactionDialog = false;
-    this.submitted = false;
   }
 
   findIndexById(id: string): number {
