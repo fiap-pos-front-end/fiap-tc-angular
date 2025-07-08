@@ -24,6 +24,11 @@ export class Transaction {
     }
   }
 
+  // TODO: Atualizar esse método para gerar ID corretamente (com injeção de dependência) e uma categoria aleatória
+  public static reset(): Transaction {
+    return new Transaction('ID-FAKE', TransactionType.INCOME, Money.from(0), new Date(), 'CATEGORY-FAKE');
+  }
+
   public static create(id: string, type: TransactionType, amount: number, date: Date, category: string): Transaction {
     return new Transaction(id, type, Money.from(amount), date, category);
   }

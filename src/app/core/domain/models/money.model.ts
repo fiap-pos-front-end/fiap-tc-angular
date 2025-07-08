@@ -13,6 +13,14 @@ export class Money {
     }
   }
 
+  public get value(): number {
+    return this.amount;
+  }
+
+  public getValue(): number {
+    return this.amount;
+  }
+
   public static from(amount: number): Money {
     return new Money(amount);
   }
@@ -24,10 +32,6 @@ export class Money {
   public subtract(other: Money): Money {
     const result = this.amount - other.amount;
     return new Money(result >= 0 ? result : 0);
-  }
-
-  public getValue(): number {
-    return this.amount;
   }
 
   public toString(): string {
