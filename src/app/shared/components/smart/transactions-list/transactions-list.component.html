@@ -25,37 +25,21 @@
     >
       <ng-template #header>
         <tr>
-          <th style="width: 3rem">
-            <p-tableHeaderCheckbox />
-          </th>
-          <th>#</th>
-          <th pSortableColumn="type">
-            <div class="flex gap-2 items-center">
-              Tipo
-              <p-sortIcon field="type" />
-            </div>
-          </th>
-          <th pSortableColumn="amount">
-            <div class="flex gap-2 items-center">
-              Valor
-              <p-sortIcon field="amount" />
-            </div>
-          </th>
-          <th pSortableColumn="category">
-            <div class="flex gap-2 items-center">
-              Categoria
-              <p-sortIcon field="category" />
-            </div>
-          </th>
-          <th pSortableColumn="date">
-            <div class="flex gap-2 items-center">
-              Data
-              <p-sortIcon field="date" />
-            </div>
-          </th>
+          <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+
+          @for (col of cols; track col.field) {
+            <th pSortableColumn="{{ col.field }}">
+              <div class="flex gap-2 items-center">
+                {{ col.header }}
+                <p-sortIcon field="{{ col.field }}" />
+              </div>
+            </th>
+          }
+
           <th></th>
         </tr>
       </ng-template>
+
       <ng-template #body let-transaction>
         <tr>
           <td><p-tableCheckbox [value]="transaction" /></td>
