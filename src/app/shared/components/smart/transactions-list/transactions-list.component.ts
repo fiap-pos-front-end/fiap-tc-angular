@@ -42,10 +42,23 @@ export class TransactionsListComponent implements OnInit {
   private messageService = inject(MessageService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
+  // TODO: Transformar em Signals
+  submitted: boolean = false;
   newTransactionDialog: boolean = false;
+
   selectedTransactions: Transaction[] = [];
   transaction!: Transaction;
   transactions$: Observable<Transaction[]> = new Observable<Transaction[]>();
+
+  onNewTransactionClicked() {
+    this.transaction = Transaction.reset();
+    this.submitted = false;
+    this.newTransactionDialog = true;
+  }
+
+  onExportCsvClicked() {
+    this.dt.exportCSV();
+  }
 
   // ---- Começar revisão daqui ----
 
@@ -54,8 +67,6 @@ export class TransactionsListComponent implements OnInit {
   product!: Product;
 
   selectedProducts!: Product[] | null;
-
-  submitted: boolean = false;
 
   @ViewChild('dt') dt!: Table;
 
@@ -71,10 +82,6 @@ export class TransactionsListComponent implements OnInit {
 
   private loadTransactions(): void {
     this.transactions$ = this.manageTransactionsUseCase.getAllTransactions();
-  }
-
-  exportCSV() {
-    this.dt.exportCSV();
   }
 
   loadDemoData() {
@@ -95,12 +102,6 @@ export class TransactionsListComponent implements OnInit {
       title: col.header,
       dataKey: col.field,
     }));
-  }
-
-  openNew() {
-    this.product = {};
-    this.submitted = false;
-    this.newTransactionDialog = true;
   }
 
   editTransaction(product: Product) {

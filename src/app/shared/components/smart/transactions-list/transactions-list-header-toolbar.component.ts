@@ -1,4 +1,4 @@
-import { Component, inject, input, Signal } from '@angular/core';
+import { Component, inject, input, InputSignal, output } from '@angular/core';
 import { Transaction } from '@fiap-tc-angular/core/domain';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -27,17 +27,25 @@ import { Toolbar } from 'primeng/toolbar';
 export class TransactionsListHeaderToolbarComponent {
   private confirmationService = inject(ConfirmationService);
 
-  readonly selectedTransactions: Signal<Transaction[]> = input([]);
+  readonly selectedTransactions: InputSignal<Transaction[]> = input.required<Transaction[]>();
 
-  // TODO: Criar um EventEmitter para abrir o dialog de nova transação
-  openNew() {
-    // this.product = {};
-    // this.submitted = false;
-    // this.newTransactionDialog = true;
+  readonly onNewTransactionClicked = output<void>();
+  readonly onExportCsvClicked = output<void>();
+
+  onNewTransactionClick() {
+    this.onNewTransactionClicked.emit();
+  }
+
+  onDeleteSelectedTransactionsClick() {
+    this.deleteSelectedTransactions();
+  }
+
+  onExportCsvClick() {
+    this.onExportCsvClicked.emit();
   }
 
   // TODO: Criar um EventEmitter para deletar as transações selecionadas
-  deleteSelectedTransactions() {
+  private deleteSelectedTransactions() {
     this.confirmationService.confirm({
       message: 'Você tem certeza que deseja deletar as transações selecionadas?',
       header: 'Confirmar',
@@ -65,9 +73,5 @@ export class TransactionsListHeaderToolbarComponent {
         // });
       },
     });
-  }
-
-  exportCSV() {
-    // TODO: Implementar a exportação do CSV
   }
 }

@@ -2,7 +2,11 @@
   <div class="card">
     <p-toast />
 
-    <app-transactions-list-header-toolbar />
+    <app-transactions-list-header-toolbar
+      [selectedTransactions]="selectedTransactions"
+      (onNewTransactionClicked)="onNewTransactionClicked()"
+      (onExportCsvClicked)="onExportCsvClicked()"
+    />
 
     <p-table
       #dt
