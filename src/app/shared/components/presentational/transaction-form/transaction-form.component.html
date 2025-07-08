@@ -1,47 +1,40 @@
-<ng-template #content>
-  <div class="flex flex-col gap-6">
+<div class="flex flex-col gap-4">
+  <div class="flex gap-3">
     <div>
-      <label for="name" class="block mb-3 font-bold">Name</label>
-      <input type="text" pInputText id="name" [(ngModel)]="transaction().category" required autofocus fluid />
-      @if (submitted && !transaction().category) {
-        <small class="text-red-500">Categoria is required.</small>
-      }
-    </div>
-
-    <div>
-      <label for="type" class="block mb-3 font-bold"> Tipo da transação </label>
-      <p-select
-        [(ngModel)]="transaction().type"
-        inputId="type"
-        [options]="transactionTypes"
-        optionLabel="label"
-        placeholder="Selecione o tipo da transação"
+      <label for="amount" class="block mb-2 font-bold">Valor</label>
+      <p-inputnumber
+        id="amount"
+        [(ngModel)]="transaction().amount.value"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
         fluid
       />
     </div>
 
-    <div class="grid grid-cols-12 gap-4">
-      <div class="col-span-6">
-        <label for="amount" class="block mb-3 font-bold">Valor</label>
-        <p-inputnumber
-          id="amount"
-          [(ngModel)]="transaction().amount"
-          mode="currency"
-          currency="BRL"
-          locale="pt-BR"
-          fluid
-        />
-      </div>
-      <div class="col-span-6">
-        <label for="date" class="block mb-3 font-bold">Data</label>
-        <p-calendar id="date" [(ngModel)]="transaction().date" fluid />
-      </div>
+    <!-- TODO: Preciso resolver o calendário quebrando dentro do dialog -->
+    <div>
+      <label for="date" class="block mb-2 font-bold">Data</label>
+      <p-datepicker id="date" [(ngModel)]="transaction().date" fluid [showButtonBar]="true" />
     </div>
   </div>
-</ng-template>
 
-<ng-template #footer>
-  <!-- TODO: Trocar os métodos aqui por um EventEmitter genérico -->
-  <p-button label="Cancelar" icon="pi pi-times" text (click)="hideDialog()" />
-  <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
-</ng-template>
+  <div>
+    <label for="type" class="block mb-2 font-bold"> Tipo da transação </label>
+    <p-select
+      [options]="transactionTypes"
+      [(ngModel)]="selectedTransactionType"
+      optionLabel="label"
+      placeholder="Selecione o tipo da transação"
+      class="w-full md:w-56"
+    />
+  </div>
+
+  <div>
+    <label for="name" class="block mb-2 font-bold">Categoria</label>
+    <input type="text" pInputText id="name" [(ngModel)]="transaction().category" required autofocus fluid />
+    <!-- @if (submitted && !transaction().category) {
+      <small class="text-red-500">Categoria is required.</small>
+    } -->
+  </div>
+</div>
