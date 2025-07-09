@@ -2,7 +2,6 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
-import { inMemoryTransactionProvider } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -33,13 +32,7 @@ interface ExportColumn {
     ConfirmPopupModule,
     ...PRIMENG_MODULES,
   ],
-  providers: [
-    MessageService,
-    ConfirmationService,
-    ManageTransactionsUseCaseService,
-    inMemoryTransactionProvider,
-    AsyncPipe,
-  ],
+  providers: [MessageService, ConfirmationService, ManageTransactionsUseCaseService, AsyncPipe],
   templateUrl: './transactions-list.component.html',
 })
 export class TransactionsListComponent implements OnInit {
@@ -145,12 +138,11 @@ export class TransactionsListComponent implements OnInit {
     this.submitted = true;
 
     if (this.transaction().amount.value <= 0) {
-      // TODO: talvez exibir mensagem de erro aqui? Pq já tem uma no form
-      // this.messageService.add({
-      //   severity: 'error',
-      //   summary: 'Erro',
-      //   detail: 'O valor da transação não pode ser zero ou negativo',
-      // });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'O valor da transação não pode ser zero ou negativo',
+      });
 
       return;
     }
