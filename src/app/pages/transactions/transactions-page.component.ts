@@ -9,6 +9,6 @@ import { emitEvent } from '@fiap-pos-front-end/fiap-tc-shared';
 })
 export class TransactionsPageComponent implements OnInit {
   ngOnInit(): void {
-    emitEvent('balanceChanged', 123);
+    emitEvent('balanceChange', 123);
   }
 }
