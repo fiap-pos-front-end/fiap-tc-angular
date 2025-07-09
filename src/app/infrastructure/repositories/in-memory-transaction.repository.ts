@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { ITransactionRepository, Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { Observable, of } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class InMemoryTransactionRepository implements ITransactionRepository {
   transactions: Transaction[] = [
     Transaction.create('1', TransactionType.INCOME, 100, new Date(), 'Salário'),

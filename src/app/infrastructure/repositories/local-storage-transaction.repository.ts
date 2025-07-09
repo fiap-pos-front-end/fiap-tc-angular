@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { ITransactionRepository, Transaction } from '@fiap-tc-angular/core/domain';
 import { Observable, of } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class LocalStorageTransactionRepository implements ITransactionRepository {
   private readonly STORAGE_KEY = 'transactions';
 
