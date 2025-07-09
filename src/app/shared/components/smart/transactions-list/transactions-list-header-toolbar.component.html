@@ -1,0 +1,32 @@
+<p-toolbar class="mb-6">
+  <ng-template #start>
+    <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
+    <p-button
+      severity="danger"
+      label="Deletar"
+      icon="pi pi-trash"
+      outlined
+      (onClick)="onDeleteSelectedTransactionsClick()"
+      [disabled]="!selectedTransactions() || !selectedTransactions().length"
+    />
+  </ng-template>
+
+  <ng-template #end>
+    <p-iconfield class="mr-2">
+      <p-inputicon class="pi pi-search" />
+      <input pInputText type="text" placeholder="Pesquisar..." (input)="onSearchInput.emit($event)" />
+    </p-iconfield>
+    <p-fileUpload
+      mode="basic"
+      accept="image/*"
+      [maxFileSize]="1000000"
+      label="Importar"
+      chooseLabel="Importar"
+      auto
+      customUpload
+      class="inline-block mr-2"
+      [chooseButtonProps]="{ severity: 'secondary' }"
+    />
+    <p-button label="Exportar" icon="pi pi-upload" severity="secondary" (onClick)="onExportCsvClick()" />
+  </ng-template>
+</p-toolbar>
