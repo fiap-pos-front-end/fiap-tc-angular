@@ -59,7 +59,7 @@
     <!-- TODO: Tornar esse título dinâmico se for edição -->
     <p-dialog [(visible)]="newTransactionDialog" [style]="{ width: '450px' }" header="Nova transação" [modal]="true">
       <ng-template #content>
-        <app-transaction-form [transaction]="transaction()" />
+        <app-transaction-form [transaction]="transaction()" (transactionChange)="onTransactionChange($event)" />
       </ng-template>
 
       <ng-template #footer>

@@ -131,6 +131,10 @@ export class TransactionsListComponent implements OnInit {
     }
   }
 
+  onTransactionChange(updatedTransaction: Transaction) {
+    this.transaction.set(updatedTransaction);
+  }
+
   editTransaction(transaction: Transaction) {
     // TODO: corrigir a exibição do tipo da transação no form
     this.transaction.set(transaction);

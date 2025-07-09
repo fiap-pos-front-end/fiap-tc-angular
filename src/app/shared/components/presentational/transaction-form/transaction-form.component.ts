@@ -1,4 +1,4 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { DatePicker } from 'primeng/datepicker';
@@ -7,9 +7,16 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 
 type TransactionTypeSelectOption = {
-  label: TransactionType | undefined;
-  value: string | undefined;
+  label: TransactionType;
+  value: TransactionType;
 };
+
+enum TransactionField {
+  AMOUNT = 'amount',
+  DATE = 'date',
+  TYPE = 'type',
+  CATEGORY = 'category',
+}
 
 @Component({
   selector: 'app-transaction-form',
@@ -17,18 +24,37 @@ type TransactionTypeSelectOption = {
   templateUrl: './transaction-form.component.html',
 })
 export class TransactionFormComponent {
-  transaction: InputSignal<Transaction> = input<Transaction>(Transaction.reset());
+  transaction = input<Transaction>();
+
+  transactionChange = output<Transaction>();
+
+  readonly TransactionField: typeof TransactionField = TransactionField;
+
+  // Form state to track current values
+  amount = computed(() => this.transaction()?.amount.value ?? 0);
+  date = computed(() => this.transaction()?.date ?? new Date());
+  category = computed(() => this.transaction()?.category ?? '');
+  type = computed(() => this.transaction()?.type ?? TransactionType.INCOME);
 
   readonly transactionTypes: Array<TransactionTypeSelectOption> = Object.entries(TransactionType).map(
-    ([value, label]) => ({ label, value }),
+    ([value, label]) => ({
+      label: label as TransactionType,
+      value: value as TransactionType,
+    }),
   );
 
-  selectedTransactionType: Signal<TransactionTypeSelectOption | undefined> = computed(() => {
-    const selectedTransactionType = this.transactionTypes.find((type) => type.label === this.transaction().type);
+  updateField(field: TransactionField, value: any): void {
+    const current = this.transaction();
+    if (!current) return;
 
-    return {
-      label: selectedTransactionType?.label,
-      value: selectedTransactionType?.value,
-    };
-  });
+    const updatedTransaction = Transaction.create(
+      current.id,
+      field === TransactionField.TYPE ? value : current.type,
+      field === TransactionField.AMOUNT ? value : current.amount.value,
+      field === TransactionField.DATE ? value : current.date,
+      field === TransactionField.CATEGORY ? value : current.category,
+    );
+
+    this.transactionChange.emit(updatedTransaction);
+  }
 }
