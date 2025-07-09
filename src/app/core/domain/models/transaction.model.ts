@@ -3,78 +3,38 @@ import { TransactionType } from './transaction-type.enum';
 
 export class Transaction {
   private constructor(
-    private readonly _id: string,
-    private readonly _type: TransactionType,
-    private readonly _amount: Money,
-    private readonly _date: Date,
-    private readonly _category: string,
-  ) {
-    this.validateTransaction();
-  }
-
-  private validateTransaction(): void {
-    if (!this._id) {
-      throw new Error('Transaction must have an ID');
-    }
-    if (!this._category) {
-      throw new Error('Transaction must have a category');
-    }
-    if (!this._date) {
-      throw new Error('Transaction must have a date');
-    }
-  }
-
-  // TODO: Atualizar esse método para gerar ID corretamente (com injeção de dependência) e uma categoria aleatória
-  public static reset(): Transaction {
-    return new Transaction('ID-FAKE', TransactionType.INCOME, Money.from(0), new Date(), 'CATEGORY-FAKE');
-  }
+    public readonly id: string,
+    public readonly type: TransactionType,
+    public readonly amount: Money,
+    public readonly date: Date,
+    public readonly category: string,
+  ) {}
 
   public static create(id: string, type: TransactionType, amount: number, date: Date, category: string): Transaction {
     return new Transaction(id, type, Money.from(amount), date, category);
   }
 
-  // Getters
-  get id(): string {
-    return this._id;
-  }
-
-  get type(): TransactionType {
-    return this._type;
-  }
-
-  get amount(): Money {
-    return this._amount;
-  }
-
-  get date(): Date {
-    return this._date;
-  }
-
-  get category(): string {
-    return this._category;
-  }
-
   // Domain methods
   public isExpense(): boolean {
-    return this._type === TransactionType.EXPENSE;
+    return this.type === TransactionType.EXPENSE;
   }
 
   public isIncome(): boolean {
-    return this._type === TransactionType.INCOME;
+    return this.type === TransactionType.INCOME;
   }
 
   public getSignedAmount(): Money {
-    return this.isExpense() ? Money.from(-this._amount.getValue()) : this._amount;
+    return this.isExpense() ? Money.from(-this.amount.getValue()) : this.amount;
   }
 
   // Para serialização
   public toJSON() {
     return {
-      id: this._id,
-      type: this._type,
-      amount: this._amount.getValue(),
-      date: this._date,
-      category: this._category,
+      id: this.id,
+      type: this.type,
+      amount: this.amount.getValue(),
+      date: this.date,
+      category: this.category,
     };
   }
 }

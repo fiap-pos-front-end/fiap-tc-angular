@@ -1,12 +1,17 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
-import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
+import {
+  CreateTransactionUseCase,
+  ID_GENERATOR_TOKEN,
+  ManageTransactionsUseCaseService,
+  TRANSACTION_REPOSITORY_TOKEN,
+} from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { InMemoryTransactionRepository, UuidGeneratorRepository } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
-import { Observable } from 'rxjs';
 import { TransactionFormComponent } from '../../presentational/transaction-form/transaction-form.component';
 import { PRIMENG_MODULES } from './imports';
 import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
@@ -32,13 +37,49 @@ interface ExportColumn {
     ConfirmPopupModule,
     ...PRIMENG_MODULES,
   ],
-  providers: [MessageService, ConfirmationService, ManageTransactionsUseCaseService, AsyncPipe],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    ManageTransactionsUseCaseService,
+    AsyncPipe,
+    // MVP
+    // inMemoryTransactionProvider, // TODO: Queria injetar direto no app.config.ts, mas não está funcionando (aí mudaríamos apenas lá)
+    // uuidGeneratorProvider, // TODO: Queria injetar direto no app.config.ts, mas não está funcionando (aí mudaríamos apenas lá)
+    // InMemoryTransactionRepository,
+    // UuidGeneratorRepository,
+    // {
+    //   provide: CreateTransactionUseCase,
+    //   useFactory: (repo: InMemoryTransactionRepository, idGen: UuidGeneratorRepository) =>
+    //     new CreateTransactionUseCase(repo, idGen),
+    //   deps: [InMemoryTransactionRepository, UuidGeneratorRepository],
+    // },
+
+    // ✅ Injeta o repositório como singleton
+    {
+      provide: TRANSACTION_REPOSITORY_TOKEN,
+      useClass: InMemoryTransactionRepository,
+    },
+
+    {
+      provide: ID_GENERATOR_TOKEN,
+      useClass: UuidGeneratorRepository,
+    },
+
+    // ✅ Injeta o use case usando os tokens corretos
+    {
+      provide: CreateTransactionUseCase,
+      useFactory: (repo: InMemoryTransactionRepository, idGen: UuidGeneratorRepository) =>
+        new CreateTransactionUseCase(repo, idGen),
+      deps: [TRANSACTION_REPOSITORY_TOKEN, ID_GENERATOR_TOKEN],
+    },
+  ],
   templateUrl: './transactions-list.component.html',
 })
 export class TransactionsListComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
+  private createTransactionUseCase = inject(CreateTransactionUseCase);
 
   // TODO: Transformar em Signals
   submitted: boolean = false;
@@ -47,8 +88,12 @@ export class TransactionsListComponent implements OnInit {
   exportColumns!: ExportColumn[];
   @ViewChild('dt') dt!: Table;
   selectedTransactions: Transaction[] = [];
-  transaction: WritableSignal<Transaction> = signal<Transaction>(Transaction.reset());
-  transactions$: Observable<Transaction[]> = new Observable<Transaction[]>();
+  transactions = signal<Transaction[]>([]);
+
+  // TODO: Com certeza vou ter que melhorar isso para ser um DTO ou algo do tipo, e evitar ter que usar o create aqui. Isso tá errado.
+  transaction: WritableSignal<Transaction | undefined> = signal<Transaction | undefined>(
+    Transaction.create('1', TransactionType.INCOME, 100, new Date(), 'Salário'),
+  );
 
   ngOnInit() {
     this.prepareColumns();
@@ -71,7 +116,10 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    this.transactions$ = this.manageTransactionsUseCase.getAllTransactions();
+    this.manageTransactionsUseCase.getAllTransactions().subscribe((list) => {
+      console.log('## CL ## Lista atualizada:', list);
+      this.transactions.set(list);
+    });
   }
 
   private createConfirmationDialog(message: string, onAccept: () => void) {
@@ -95,7 +143,7 @@ export class TransactionsListComponent implements OnInit {
   }
 
   openNewTransactionDialog() {
-    this.transaction.set(Transaction.reset());
+    // this.transaction.set(Transaction.reset());
     // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
     this.newTransactionDialog = true;
   }
@@ -137,7 +185,15 @@ export class TransactionsListComponent implements OnInit {
   saveTransaction() {
     this.submitted = true;
 
-    if (this.transaction().amount.value <= 0) {
+    const transaction = this.transaction();
+    console.log('## CL ## Transação atual', transaction);
+    if (!transaction) {
+      return;
+    }
+
+    console.log('## CL ## Passou do primeiro if');
+
+    if (transaction.amount.value <= 0) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
@@ -147,7 +203,21 @@ export class TransactionsListComponent implements OnInit {
       return;
     }
 
-    if (this.transaction().id) {
+    console.log('## CL ## Passou do segundo if');
+
+    this.createTransactionUseCase
+      .execute({
+        category: transaction.category,
+        amount: transaction.amount.value,
+        date: transaction.date,
+        type: transaction.type,
+      })
+      .subscribe((transaction) => {
+        console.log('## CL ## nova transação', transaction);
+        this.loadTransactions();
+      });
+
+    if (this.transaction()?.id) {
       // TODO: atualizar transação
     } else {
       // TODO: aqui estaria certo usar o uuid diretamente? Eu penso que isso é contra as regras do SOLID
@@ -156,7 +226,7 @@ export class TransactionsListComponent implements OnInit {
 
     // this.transactions = [...this.transactions];
     this.newTransactionDialog = false;
-    this.transaction.set(Transaction.reset());
+    // this.transaction.set(Transaction.reset());
   }
 
   deleteTransaction(transaction: Transaction) {

@@ -3,5 +3,5 @@
 // export * from './get-balance.usecase';
 // export * from './get-transactions.usecase';
 
-export * from './manage-transactions-use-case.service';
 export * from './tokens';
+export * from './usecases';
