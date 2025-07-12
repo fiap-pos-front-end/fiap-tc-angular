@@ -188,6 +188,7 @@ export class TransactionsListComponent implements OnInit {
     const transaction = this.transaction();
     if (!transaction) return;
 
+    // TODO: quando adicionar validações nos forms, talvez eu tire daqui ou deixe algo mais genérico
     if (transaction.amount.value <= 0) {
       this.messageService.add({
         severity: 'error',
@@ -197,8 +198,6 @@ export class TransactionsListComponent implements OnInit {
 
       return;
     }
-
-    console.log('## CL ## Passou do segundo if');
 
     this.createTransactionUseCase
       .execute({
