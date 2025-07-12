@@ -16,17 +16,6 @@
       <p-inputicon class="pi pi-search" />
       <input pInputText type="text" placeholder="Pesquisar..." (input)="onSearchInput.emit($event)" />
     </p-iconfield>
-    <p-fileUpload
-      mode="basic"
-      accept="image/*"
-      [maxFileSize]="1000000"
-      label="Importar"
-      chooseLabel="Importar"
-      auto
-      customUpload
-      class="inline-block mr-2"
-      [chooseButtonProps]="{ severity: 'secondary' }"
-    />
     <p-button label="Exportar" icon="pi pi-upload" severity="secondary" (onClick)="onExportCsvClick()" />
   </ng-template>
 </p-toolbar>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TransactionsListComponent } from '@fiap-tc-angular/components';
 import { emitEvent } from '@fiap-pos-front-end/fiap-tc-shared';
+import { TransactionsListComponent } from '@fiap-tc-angular/components';
 
 @Component({
   selector: 'app-transactions-page',
