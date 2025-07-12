@@ -11,11 +11,14 @@
     />
   </ng-template>
 
-  <ng-template #end>
+  <ng-template #center>
     <p-iconfield class="mr-2">
       <p-inputicon class="pi pi-search" />
       <input pInputText type="text" placeholder="Pesquisar..." (input)="onSearchInput.emit($event)" />
     </p-iconfield>
+  </ng-template>
+
+  <ng-template #end>
     <p-button label="Exportar" icon="pi pi-upload" severity="secondary" (onClick)="onExportCsvClick()" />
   </ng-template>
 </p-toolbar>
