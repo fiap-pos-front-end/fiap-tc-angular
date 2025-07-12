@@ -122,7 +122,7 @@ export class TransactionsListComponent implements OnInit {
     });
   }
 
-  private createConfirmationDialog(message: string, onAccept: () => void) {
+  private buildAndDisplayConfirmationDialog(message: string, onAccept: () => void) {
     this.confirmationService.confirm({
       message,
       header: 'Confirmar',
@@ -186,12 +186,7 @@ export class TransactionsListComponent implements OnInit {
     this.submitted = true;
 
     const transaction = this.transaction();
-    console.log('## CL ## Transação atual', transaction);
-    if (!transaction) {
-      return;
-    }
-
-    console.log('## CL ## Passou do primeiro if');
+    if (!transaction) return;
 
     if (transaction.amount.value <= 0) {
       this.messageService.add({
@@ -230,15 +225,18 @@ export class TransactionsListComponent implements OnInit {
   }
 
   deleteTransaction(transaction: Transaction) {
-    this.createConfirmationDialog('Você tem certeza que deseja deletar a transação #' + transaction.id + '?', () => {
-      // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
-      // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
-      // this.transaction = {};
-    });
+    this.buildAndDisplayConfirmationDialog(
+      'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
+      () => {
+        // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
+        // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
+        // this.transaction = {};
+      },
+    );
   }
 
   deleteMultipleTransactions() {
-    this.createConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
+    this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
       // TODO: [MESMA COISA] aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
       // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
       // this.selectedTransactions = null;
