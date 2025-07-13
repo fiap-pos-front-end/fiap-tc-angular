@@ -2,6 +2,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import {
   CreateTransactionUseCase,
+  DeleteTransactionUseCase,
   ID_GENERATOR_TOKEN,
   ManageTransactionsUseCaseService,
   TRANSACTION_REPOSITORY_TOKEN,
@@ -72,6 +73,11 @@ interface ExportColumn {
         new CreateTransactionUseCase(repo, idGen),
       deps: [TRANSACTION_REPOSITORY_TOKEN, ID_GENERATOR_TOKEN],
     },
+    {
+      provide: DeleteTransactionUseCase,
+      useFactory: (repo: InMemoryTransactionRepository) => new DeleteTransactionUseCase(repo),
+      deps: [TRANSACTION_REPOSITORY_TOKEN],
+    },
   ],
   templateUrl: './transactions-list.component.html',
 })
@@ -80,6 +86,7 @@ export class TransactionsListComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
   private createTransactionUseCase = inject(CreateTransactionUseCase);
+  private deleteTransactionUseCase = inject(DeleteTransactionUseCase);
 
   // TODO: Transformar em Signals
   submitted: boolean = false;
@@ -117,7 +124,6 @@ export class TransactionsListComponent implements OnInit {
 
   private loadTransactions(): void {
     this.manageTransactionsUseCase.getAllTransactions().subscribe((list) => {
-      console.log('## CL ## Lista atualizada:', list);
       this.transactions.set(list);
     });
   }
@@ -144,13 +150,11 @@ export class TransactionsListComponent implements OnInit {
 
   openNewTransactionDialog() {
     // this.transaction.set(Transaction.reset());
-    // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
     this.newTransactionDialog = true;
   }
 
   hideNewTransactionDialog() {
     this.newTransactionDialog = false;
-    // this.submitted = false; // TODO: entender melhor como vou controlar essa propriedade
   }
 
   onSearchInput(event: Event) {
@@ -227,7 +231,9 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
       () => {
-        // TODO: aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
+        this.deleteTransactionUseCase.execute(transaction.id).subscribe(() => {
+          this.loadTransactions();
+        });
         // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
         // this.transaction = {};
       },
