@@ -1,6 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { TransactionFormComponent } from '@fiap-tc-angular/components';
+import { TransactionFormComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
 import {
   ID_GENERATOR_TOKEN,
   ManageTransactionsUseCaseService,
@@ -14,7 +14,6 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
-import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
 
 interface Column {
   field: string;
