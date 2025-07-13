@@ -21,11 +21,6 @@ interface Column {
   customExportHeader?: string;
 }
 
-interface ExportColumn {
-  title: string;
-  dataKey: string;
-}
-
 @Component({
   selector: 'app-transactions-list',
   imports: [
@@ -52,10 +47,8 @@ export class TransactionsListComponent implements OnInit {
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
   // TODO: Transformar em Signals
-  submitted: boolean = false;
   newTransactionDialog: boolean = false;
   cols!: Column[];
-  exportColumns!: ExportColumn[];
   @ViewChild('dt') dt!: Table;
   selectedTransactions: Transaction[] = [];
   transactions = signal<Transaction[]>([]);
@@ -78,11 +71,6 @@ export class TransactionsListComponent implements OnInit {
       { field: 'category', header: 'Categoria' },
       { field: 'date', header: 'Data' },
     ];
-
-    this.exportColumns = this.cols.map((col) => ({
-      title: col.header,
-      dataKey: col.field,
-    }));
   }
 
   private loadTransactions(): void {
@@ -150,8 +138,6 @@ export class TransactionsListComponent implements OnInit {
   }
 
   saveTransaction() {
-    this.submitted = true;
-
     const transaction = this.transaction();
     if (!transaction) return;
 
