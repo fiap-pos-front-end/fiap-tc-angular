@@ -32,6 +32,12 @@
             <div class="flex gap-2 items-center">
               {{ col.header }}
               <p-sortIcon field="{{ col.field }}" />
+              <p-columnFilter
+                [type]="col.field === 'amount' ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
+                field="{{ col.field }}"
+                display="menu"
+                class="ml-auto"
+              />
             </div>
           </th>
         }
