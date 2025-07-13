@@ -32,6 +32,13 @@
             <div class="flex gap-2 items-center">
               {{ col.header }}
               <p-sortIcon field="{{ col.field }}" />
+              <p-columnFilter
+                [type]="col.field === 'amount' ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
+                field="{{ col.field }}"
+                currency="BRL"
+                display="menu"
+                class="ml-auto"
+              />
             </div>
           </th>
         }
@@ -45,7 +52,7 @@
         <td><p-tableCheckbox [value]="transaction" /></td>
         <td>{{ transaction.id | slice: 0 : 4 }}...</td>
         <td><p-tag [value]="transaction.type" [severity]="getTransactionTypeColor(transaction.type)" /></td>
-        <td>{{ transaction.amount.toString() }}</td>
+        <td>{{ transaction.amount.value | currency: 'BRL' }}</td>
         <td>{{ transaction.category | titlecase }}</td>
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td>
