@@ -22,16 +22,16 @@ export class ManageTransactionsUseCaseService {
     return this.repository.getAll();
   }
 
-  public createTransaction(input: CreateTransactionDTO): Observable<Transaction> {
-    const transaction = Transaction.create(
-      this.idGenerator.generate(),
-      input.type,
-      input.amount,
-      input.date,
-      input.category,
-    );
+  public createTransaction(dto: CreateTransactionDTO): Observable<Transaction> {
+    const transaction = Transaction.create(this.idGenerator.generate(), dto.type, dto.amount, dto.date, dto.category);
 
     return this.repository.create(transaction);
+  }
+
+  public updateTransaction(id: string, dto: CreateTransactionDTO): Observable<Transaction> {
+    const transaction = Transaction.create(id, dto.type, dto.amount, dto.date || new Date(), dto.category);
+
+    return this.repository.update(transaction);
   }
 
   public deleteTransaction(id: string): Observable<void> {

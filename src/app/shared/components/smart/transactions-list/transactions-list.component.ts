@@ -174,23 +174,24 @@ export class TransactionsListComponent implements OnInit {
       return;
     }
 
-    this.manageTransactionsUseCase
-      .createTransaction({
-        category: transaction.category,
-        amount: transaction.amount.value,
-        date: transaction.date,
-        type: transaction.type,
-      })
-      .subscribe((transaction) => {
-        console.log('## CL ## nova transação', transaction);
-        this.loadTransactions();
-      });
-
     if (this.transaction()?.id) {
-      // TODO: atualizar transação
+      this.manageTransactionsUseCase
+        .updateTransaction(this.transaction()!.id, {
+          category: transaction.category,
+          amount: transaction.amount.value,
+          date: transaction.date,
+          type: transaction.type,
+        })
+        .subscribe(() => this.loadTransactions());
     } else {
-      // TODO: aqui estaria certo usar o uuid diretamente? Eu penso que isso é contra as regras do SOLID
-      // TODO: criar transação
+      this.manageTransactionsUseCase
+        .createTransaction({
+          category: transaction.category,
+          amount: transaction.amount.value,
+          date: transaction.date,
+          type: transaction.type,
+        })
+        .subscribe(() => this.loadTransactions());
     }
 
     // this.transactions = [...this.transactions];
