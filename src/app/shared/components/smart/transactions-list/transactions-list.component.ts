@@ -205,7 +205,7 @@ export class TransactionsListComponent implements OnInit {
         this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe(() => {
           this.loadTransactions();
         });
-        // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
+
         // this.transaction = {};
       },
     );
@@ -213,9 +213,12 @@ export class TransactionsListComponent implements OnInit {
 
   deleteMultipleTransactions() {
     this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
-      // TODO: [MESMA COISA] aqui não é mais o componente que aplica essa regra, e sim os serviços que criamos
-      // this.transactions = this.transactions.filter((val) => !this.selectedTransactions?.includes(val));
-      // this.selectedTransactions = null;
+      this.selectedTransactions.forEach((transaction) => {
+        this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe(() => {});
+      });
+
+      this.loadTransactions();
+      this.selectedTransactions = [];
     });
   }
 }
