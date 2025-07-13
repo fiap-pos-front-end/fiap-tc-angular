@@ -1,13 +1,8 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { TransactionFormComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
-import {
-  ID_GENERATOR_TOKEN,
-  ManageTransactionsUseCaseService,
-  TRANSACTION_REPOSITORY_TOKEN,
-} from '@fiap-tc-angular/core/application';
+import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
-import { InMemoryTransactionRepository, UuidGeneratorRepository } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -36,14 +31,7 @@ interface TransactionDialogState {
     ConfirmPopupModule,
     ...PRIMENG_MODULES,
   ],
-  providers: [
-    MessageService,
-    ConfirmationService,
-    ManageTransactionsUseCaseService,
-    AsyncPipe,
-    { provide: TRANSACTION_REPOSITORY_TOKEN, useClass: InMemoryTransactionRepository },
-    { provide: ID_GENERATOR_TOKEN, useClass: UuidGeneratorRepository },
-  ],
+  providers: [MessageService, ConfirmationService, ManageTransactionsUseCaseService, AsyncPipe],
   templateUrl: './transactions-list.component.html',
 })
 export class TransactionsListComponent implements OnInit {
