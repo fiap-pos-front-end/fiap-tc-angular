@@ -1,8 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import {
-  CreateTransactionUseCase,
-  DeleteTransactionUseCase,
   ID_GENERATOR_TOKEN,
   ManageTransactionsUseCaseService,
   TRANSACTION_REPOSITORY_TOKEN,
@@ -43,18 +41,6 @@ interface ExportColumn {
     ConfirmationService,
     ManageTransactionsUseCaseService,
     AsyncPipe,
-    // MVP
-    // inMemoryTransactionProvider, // TODO: Queria injetar direto no app.config.ts, mas não está funcionando (aí mudaríamos apenas lá)
-    // uuidGeneratorProvider, // TODO: Queria injetar direto no app.config.ts, mas não está funcionando (aí mudaríamos apenas lá)
-    // InMemoryTransactionRepository,
-    // UuidGeneratorRepository,
-    // {
-    //   provide: CreateTransactionUseCase,
-    //   useFactory: (repo: InMemoryTransactionRepository, idGen: UuidGeneratorRepository) =>
-    //     new CreateTransactionUseCase(repo, idGen),
-    //   deps: [InMemoryTransactionRepository, UuidGeneratorRepository],
-    // },
-
     // ✅ Injeta o repositório como singleton
     {
       provide: TRANSACTION_REPOSITORY_TOKEN,
@@ -65,19 +51,6 @@ interface ExportColumn {
       provide: ID_GENERATOR_TOKEN,
       useClass: UuidGeneratorRepository,
     },
-
-    // ✅ Injeta o use case usando os tokens corretos
-    {
-      provide: CreateTransactionUseCase,
-      useFactory: (repo: InMemoryTransactionRepository, idGen: UuidGeneratorRepository) =>
-        new CreateTransactionUseCase(repo, idGen),
-      deps: [TRANSACTION_REPOSITORY_TOKEN, ID_GENERATOR_TOKEN],
-    },
-    {
-      provide: DeleteTransactionUseCase,
-      useFactory: (repo: InMemoryTransactionRepository) => new DeleteTransactionUseCase(repo),
-      deps: [TRANSACTION_REPOSITORY_TOKEN],
-    },
   ],
   templateUrl: './transactions-list.component.html',
 })
@@ -85,8 +58,6 @@ export class TransactionsListComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   private manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
-  private createTransactionUseCase = inject(CreateTransactionUseCase);
-  private deleteTransactionUseCase = inject(DeleteTransactionUseCase);
 
   // TODO: Transformar em Signals
   submitted: boolean = false;
@@ -203,8 +174,8 @@ export class TransactionsListComponent implements OnInit {
       return;
     }
 
-    this.createTransactionUseCase
-      .execute({
+    this.manageTransactionsUseCase
+      .createTransaction({
         category: transaction.category,
         amount: transaction.amount.value,
         date: transaction.date,
@@ -231,7 +202,7 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       'Você tem certeza que deseja deletar a transação #' + transaction.id + '?',
       () => {
-        this.deleteTransactionUseCase.execute(transaction.id).subscribe(() => {
+        this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe(() => {
           this.loadTransactions();
         });
         // this.transactions = this.transactions.filter((val) => val.id !== transaction.id);
