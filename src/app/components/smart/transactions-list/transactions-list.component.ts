@@ -1,5 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { TransactionFormComponent } from '@fiap-tc-angular/components';
 import {
   ID_GENERATOR_TOKEN,
   ManageTransactionsUseCaseService,
@@ -11,7 +12,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
-import { TransactionFormComponent } from '../../presentational/transaction-form/transaction-form.component';
+import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
 import { TransactionsListHeaderToolbarComponent } from './transactions-list-header-toolbar.component';
 
@@ -138,6 +139,7 @@ export class TransactionsListComponent implements OnInit {
       [TransactionType.INCOME]: 'success',
       [TransactionType.EXPENSE]: 'danger',
     };
+
     return colors[type] || 'info';
   }
 
@@ -154,18 +156,17 @@ export class TransactionsListComponent implements OnInit {
     const transactionData = this.currentTransaction();
     if (!this.validateTransaction(transactionData)) return;
 
-    const { id, category, amount, date, type } = transactionData;
-    const dto = { category, amount: amount.value, date, type };
+    const dto = { ...transactionData, amount: transactionData.amount.value };
 
-    const operation = id
-      ? this.manageTransactionsUseCase.updateTransaction(id, dto)
+    const operation = transactionData.id
+      ? this.manageTransactionsUseCase.updateTransaction(transactionData.id, dto)
       : this.manageTransactionsUseCase.createTransaction(dto);
 
     operation.subscribe({
       next: () => {
         this.loadTransactions();
         this.hideTransactionDialog();
-        this.showSuccessMessage(`Transação ${id ? 'atualizada' : 'criada'} com sucesso`);
+        this.showSuccessMessage(`Transação ${transactionData.id ? 'atualizada' : 'criada'} com sucesso`);
       },
       error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
     });
@@ -209,7 +210,7 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
       Promise.all(
         selectedTransactions.map((transaction) =>
-          this.manageTransactionsUseCase.deleteTransaction(transaction.id).toPromise(),
+          firstValueFrom(this.manageTransactionsUseCase.deleteTransaction(transaction.id)),
         ),
       )
         .then(() => {
