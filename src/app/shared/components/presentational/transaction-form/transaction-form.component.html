@@ -13,7 +13,6 @@
       />
     </div>
 
-    <!-- TODO: Preciso resolver o calendário quebrando dentro do dialog -->
     <div>
       <label for="date" class="block mb-2 font-bold">Data</label>
       <p-datepicker
@@ -22,7 +21,7 @@
         (ngModelChange)="updateField(TransactionField.DATE, $event)"
         fluid
         dateFormat="dd/mm/yy"
-        [showButtonBar]="true"
+        appendTo="body"
       />
     </div>
   </div>
