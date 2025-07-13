@@ -41,16 +41,8 @@ interface ExportColumn {
     ConfirmationService,
     ManageTransactionsUseCaseService,
     AsyncPipe,
-    // ✅ Injeta o repositório como singleton
-    {
-      provide: TRANSACTION_REPOSITORY_TOKEN,
-      useClass: InMemoryTransactionRepository,
-    },
-
-    {
-      provide: ID_GENERATOR_TOKEN,
-      useClass: UuidGeneratorRepository,
-    },
+    { provide: TRANSACTION_REPOSITORY_TOKEN, useClass: InMemoryTransactionRepository },
+    { provide: ID_GENERATOR_TOKEN, useClass: UuidGeneratorRepository },
   ],
   templateUrl: './transactions-list.component.html',
 })
@@ -70,7 +62,7 @@ export class TransactionsListComponent implements OnInit {
 
   // TODO: Com certeza vou ter que melhorar isso para ser um DTO ou algo do tipo, e evitar ter que usar o create aqui. Isso tá errado.
   transaction: WritableSignal<Transaction | undefined> = signal<Transaction | undefined>(
-    Transaction.create('1', TransactionType.INCOME, 100, new Date(), 'Salário'),
+    Transaction.create('', TransactionType.INCOME, 100, new Date(), 'Salário'),
   );
 
   ngOnInit() {
