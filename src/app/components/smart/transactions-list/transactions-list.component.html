@@ -9,7 +9,6 @@
     (onExportCsvClicked)="onExportCsvClicked()"
   />
 
-  <!-- TODO: a paginação não está atualizando quando eu altero valores da lista (add, delete, etc.) -->
   <p-table
     #dt
     [value]="transactions()"
@@ -20,6 +19,7 @@
     [(selection)]="selectedTransactions"
     [rowHover]="true"
     dataKey="id"
+    [totalRecords]="transactions().length"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} transações"
     [showCurrentPageReport]="true"
   >
