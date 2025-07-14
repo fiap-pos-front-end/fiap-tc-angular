@@ -5,9 +5,9 @@ import { Observable, of } from 'rxjs';
 @Injectable()
 export class InMemoryTransactionRepository implements ITransactionRepository {
   transactions: Transaction[] = [
-    Transaction.create('1', TransactionType.INCOME, 100, new Date(), 'Salário'),
-    Transaction.create('2', TransactionType.EXPENSE, 200, new Date(), 'alimentação'),
-    Transaction.create('3', TransactionType.INCOME, 300, new Date(), 'Proventos'),
+    Transaction.create('f8a60281-38bc-4785-be92-b3a60c59f533', TransactionType.INCOME, 100, new Date(), 'Salário'),
+    Transaction.create('f19ff5af-20be-4e73-a4e2-9c19f1899444', TransactionType.EXPENSE, 200, new Date(), 'alimentação'),
+    Transaction.create('0a30d0b1-e0b2-49c3-a25e-d5467adead64', TransactionType.INCOME, 300, new Date(), 'Proventos'),
   ];
 
   create(transaction: Transaction): Observable<Transaction> {

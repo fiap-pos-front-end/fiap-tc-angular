@@ -2,7 +2,7 @@
   <p-toast />
 
   <app-transactions-list-header-toolbar
-    [selectedTransactions]="selectedTransactions"
+    [selectedTransactions]="selectedTransactions()"
     (onNewTransactionClicked)="openNewTransactionDialog()"
     (onDeleteSelectedTransactionsClicked)="deleteMultipleTransactions()"
     (onSearchInput)="onSearchInput($event)"
@@ -13,24 +13,32 @@
     #dt
     [value]="transactions()"
     [rows]="10"
-    [columns]="cols"
+    [columns]="cols()"
     [paginator]="true"
     [globalFilterFields]="['type', 'amount', 'date', 'category']"
     [(selection)]="selectedTransactions"
     [rowHover]="true"
     dataKey="id"
+    [totalRecords]="transactions().length"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} transações"
     [showCurrentPageReport]="true"
   >
-    <ng-template #header>
+    <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
 
-        @for (col of cols; track col.field) {
+        @for (col of cols(); track col.field) {
           <th pSortableColumn="{{ col.field }}">
             <div class="flex gap-2 items-center">
               {{ col.header }}
               <p-sortIcon field="{{ col.field }}" />
+              <p-columnFilter
+                [type]="col.field === 'amount' ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
+                field="{{ col.field }}"
+                currency="BRL"
+                display="menu"
+                class="ml-auto"
+              />
             </div>
           </th>
         }
@@ -39,12 +47,12 @@
       </tr>
     </ng-template>
 
-    <ng-template #body let-transaction>
+    <ng-template pTemplate="body" let-transaction>
       <tr>
         <td><p-tableCheckbox [value]="transaction" /></td>
-        <td>{{ transaction.id }}</td>
+        <td>{{ transaction.id | slice: 0 : 4 }}...</td>
         <td><p-tag [value]="transaction.type" [severity]="getTransactionTypeColor(transaction.type)" /></td>
-        <td>{{ transaction.amount.toString() }}</td>
+        <td>{{ transaction.amount.value | currency: 'BRL' }}</td>
         <td>{{ transaction.category | titlecase }}</td>
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td>
@@ -55,14 +63,19 @@
     </ng-template>
   </p-table>
 
-  <!-- TODO: Tornar esse título dinâmico se for edição -->
-  <p-dialog [(visible)]="newTransactionDialog" [style]="{ width: '450px' }" header="Nova transação" [modal]="true">
-    <ng-template #content>
-      <app-transaction-form [transaction]="transaction()" (transactionChange)="onTransactionChange($event)" />
+  <p-dialog
+    [(visible)]="dialogState().visible"
+    [style]="{ width: '450px' }"
+    [header]="dialogTitle()"
+    [modal]="true"
+    (onHide)="hideTransactionDialog()"
+  >
+    <ng-template pTemplate="content">
+      <app-transaction-form [transaction]="currentTransaction()" (transactionChange)="onTransactionChange($event)" />
     </ng-template>
 
-    <ng-template #footer>
-      <p-button label="Cancelar" icon="pi pi-times" text (click)="hideNewTransactionDialog()" />
+    <ng-template pTemplate="footer">
+      <p-button label="Cancelar" icon="pi pi-times" text (click)="hideTransactionDialog()" />
       <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
     </ng-template>
   </p-dialog>

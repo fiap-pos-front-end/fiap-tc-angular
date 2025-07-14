@@ -30,18 +30,15 @@ export class TransactionFormComponent {
 
   readonly TransactionField: typeof TransactionField = TransactionField;
 
-  // Form state to track current values
   amount = computed(() => this.transaction()?.amount.value ?? 0);
   date = computed(() => this.transaction()?.date ?? new Date());
   category = computed(() => this.transaction()?.category ?? '');
   type = computed(() => this.transaction()?.type ?? TransactionType.INCOME);
 
-  readonly transactionTypes: Array<TransactionTypeSelectOption> = Object.entries(TransactionType).map(
-    ([value, label]) => ({
-      label: label as TransactionType,
-      value: value as TransactionType,
-    }),
-  );
+  readonly transactionTypes: Array<TransactionTypeSelectOption> = Object.entries(TransactionType).map(([_, label]) => ({
+    label,
+    value: label,
+  }));
 
   updateField(field: TransactionField, value: any): void {
     const current = this.transaction();

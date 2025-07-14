@@ -19,7 +19,7 @@
       "@fiap-tc-angular/core/application": ["./src/app/core/application/index.ts"],
       "@fiap-tc-angular/core/domain": ["./src/app/core/domain/index.ts"],
       "@fiap-tc-angular/infrastructure": ["./src/app/infrastructure/index.ts"],
-      "@fiap-tc-angular/components": ["./src/app/shared/components/index.ts"]
+      "@fiap-tc-angular/components": ["./src/app/components/index.ts"]
     }
   },
   "angularCompilerOptions": {
