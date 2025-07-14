@@ -63,22 +63,13 @@
     </ng-template>
   </p-table>
 
-  <p-dialog
-    [(visible)]="dialogState().visible"
-    [style]="{ width: '450px' }"
-    [header]="dialogTitle()"
-    [modal]="true"
+  <app-dialog-transaction-form
+    [isVisible]="dialogState().visible"
+    [isEditing]="dialogState().isEditing"
+    [transactionToBeUpdated]="currentTransaction()"
     (onHide)="hideTransactionDialog()"
-  >
-    <ng-template pTemplate="content">
-      <app-transaction-form [transaction]="currentTransaction()" (transactionChange)="onTransactionChange($event)" />
-    </ng-template>
-
-    <ng-template pTemplate="footer">
-      <p-button label="Cancelar" icon="pi pi-times" text (click)="hideTransactionDialog()" />
-      <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
-    </ng-template>
-  </p-dialog>
+    (onSave)="saveTransaction($any($event))"
+  />
 
   <p-confirmDialog [style]="{ width: '450px' }" />
 </div>

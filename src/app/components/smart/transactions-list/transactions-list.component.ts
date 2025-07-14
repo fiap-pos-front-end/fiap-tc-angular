@@ -1,7 +1,7 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { TransactionFormComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
-import { ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { DialogTransactionFormComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
+import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -25,8 +25,8 @@ interface TransactionDialogState {
   selector: 'app-transactions-list',
   imports: [
     CommonModule,
+    DialogTransactionFormComponent,
     TransactionsListHeaderToolbarComponent,
-    TransactionFormComponent,
     ConfirmDialogModule,
     ConfirmPopupModule,
     ...PRIMENG_MODULES,
@@ -46,8 +46,6 @@ export class TransactionsListComponent implements OnInit {
   readonly selectedTransactions = signal<Transaction[]>([]);
   readonly currentTransaction = signal<Transaction | undefined>(undefined);
   readonly dialogState = signal<TransactionDialogState>({ visible: false, isEditing: false });
-
-  readonly dialogTitle = computed(() => (this.dialogState().isEditing ? 'Editar transação' : 'Nova transação'));
 
   ngOnInit() {
     this.initializeColumns();
@@ -104,7 +102,6 @@ export class TransactionsListComponent implements OnInit {
   }
 
   openNewTransactionDialog() {
-    this.currentTransaction.set(Transaction.create('', TransactionType.INCOME, 0, new Date(), ''));
     this.dialogState.set({ visible: true, isEditing: false });
   }
 
@@ -130,20 +127,13 @@ export class TransactionsListComponent implements OnInit {
     return colors[type] || 'info';
   }
 
-  onTransactionChange(updatedTransaction: Transaction) {
-    this.currentTransaction.set(updatedTransaction);
-  }
-
   editTransaction(transaction: Transaction) {
     this.currentTransaction.set(transaction);
     this.dialogState.set({ visible: true, isEditing: true });
   }
 
-  saveTransaction() {
-    const transactionData = this.currentTransaction();
-    if (!this.validateTransaction(transactionData)) return;
-
-    const dto = { ...transactionData, amount: transactionData.amount.value };
+  saveTransaction(transactionData: { id: string } & CreateTransactionDTO) {
+    const dto: CreateTransactionDTO = { ...transactionData, amount: transactionData.amount };
 
     const operation = transactionData.id
       ? this.manageTransactionsUseCase.updateTransaction(transactionData.id, dto)
@@ -154,28 +144,10 @@ export class TransactionsListComponent implements OnInit {
         this.loadTransactions();
         this.hideTransactionDialog();
         this.showSuccessMessage(`Transação ${transactionData.id ? 'atualizada' : 'criada'} com sucesso`);
+        this.currentTransaction.set(undefined);
       },
       error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
     });
-  }
-
-  private validateTransaction(transaction: Transaction | undefined): transaction is Transaction {
-    if (!transaction) {
-      this.showErrorMessage('Erro de validação', 'Dados da transação inválidos');
-      return false;
-    }
-
-    if (transaction.amount.value <= 0) {
-      this.showErrorMessage('Erro de validação', 'O valor da transação não pode ser zero ou negativo');
-      return false;
-    }
-
-    if (!transaction.category.trim()) {
-      this.showErrorMessage('Erro de validação', 'A categoria é obrigatória');
-      return false;
-    }
-
-    return true;
   }
 
   deleteTransaction(transaction: Transaction) {

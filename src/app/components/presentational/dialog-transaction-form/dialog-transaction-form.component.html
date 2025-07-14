@@ -1,0 +1,77 @@
+<p-dialog
+  [visible]="isVisible()"
+  (visibleChange)="onHide.emit()"
+  [style]="{ width: '450px' }"
+  [header]="dialogTitle()"
+  [modal]="true"
+>
+  <ng-template pTemplate="content">
+    <form [formGroup]="transactionForm" class="flex flex-col gap-4">
+      <div class="flex gap-3">
+        <div>
+          <label for="amount" class="block mb-2 font-bold">Valor</label>
+          <p-inputnumber
+            id="amount"
+            formControlName="amount"
+            (invalid)="isInvalid('amount')"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+            fluid
+          />
+          @if (isInvalid('amount')) {
+            <p-message severity="error" size="small" variant="simple">Valor é obrigatório.</p-message>
+          }
+        </div>
+
+        <div>
+          <label for="date" class="block mb-2 font-bold">Data</label>
+          <p-datepicker
+            id="date"
+            formControlName="date"
+            (invalid)="isInvalid('date')"
+            fluid
+            dateFormat="dd/mm/yy"
+            appendTo="body"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="type" class="block mb-2 font-bold">Tipo da transação</label>
+        <p-select
+          [options]="transactionTypes"
+          formControlName="type"
+          (invalid)="isInvalid('type')"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione o tipo da transação"
+          class="w-full md:w-56"
+        />
+      </div>
+
+      <div>
+        <label for="category" class="block mb-2 font-bold">Categoria</label>
+        <input
+          pInputText
+          type="text"
+          id="category"
+          placeholder="Digite sua categoria"
+          formControlName="category"
+          (invalid)="isInvalid('category')"
+          required
+          autofocus
+          fluid
+        />
+        @if (isInvalid('category')) {
+          <p-message severity="error" size="small" variant="simple">Categoria é obrigatória.</p-message>
+        }
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" text (click)="onHide.emit()" />
+    <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
+  </ng-template>
+</p-dialog>
