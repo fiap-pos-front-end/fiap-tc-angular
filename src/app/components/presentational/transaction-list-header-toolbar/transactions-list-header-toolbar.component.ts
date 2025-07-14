@@ -10,6 +10,17 @@ import { Toolbar } from 'primeng/toolbar';
   selector: 'app-transactions-list-header-toolbar',
   imports: [Button, IconField, InputIcon, InputTextModule, Toolbar],
   templateUrl: './transactions-list-header-toolbar.component.html',
+  styles: `
+    :host ::ng-deep {
+      @media only screen and (min-width: 768px) {
+        .p-toolbar-center {
+          flex: 1;
+          max-width: 60%;
+          margin: 0 auto;
+        }
+      }
+    }
+  `,
 })
 export class TransactionsListHeaderToolbarComponent {
   readonly selectedTransactions: InputSignal<Transaction[]> = input.required<Transaction[]>();
