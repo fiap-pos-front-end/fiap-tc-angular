@@ -58,7 +58,8 @@
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td>
           <p-button icon="pi pi-pencil" class="mr-2" rounded outlined (click)="editTransaction(transaction)" />
-          <p-button icon="pi pi-trash" severity="danger" rounded outlined (click)="deleteTransaction(transaction)" />
+          <p-button icon="pi pi-trash" class="mr-2" severity="danger" rounded outlined (click)="deleteTransaction(transaction)" />
+          <p-button icon="pi pi-upload" rounded outlined (click)="deleteTransaction(transaction)" />
         </td>
       </tr>
     </ng-template>
