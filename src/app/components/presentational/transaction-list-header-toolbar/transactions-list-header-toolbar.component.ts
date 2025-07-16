@@ -1,4 +1,5 @@
-import { Component, input, InputSignal, output } from '@angular/core';
+import { Component, input, InputSignal, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Transaction } from '@fiap-tc-angular/core/domain';
 import { Button } from 'primeng/button';
 import { IconField } from 'primeng/iconfield';
@@ -8,7 +9,7 @@ import { Toolbar } from 'primeng/toolbar';
 
 @Component({
   selector: 'app-transactions-list-header-toolbar',
-  imports: [Button, IconField, InputIcon, InputTextModule, Toolbar],
+  imports: [Button, IconField, InputIcon, InputTextModule, Toolbar, FormsModule],
   templateUrl: './transactions-list-header-toolbar.component.html',
   styles: `
     :host ::ng-deep {
@@ -29,6 +30,9 @@ export class TransactionsListHeaderToolbarComponent {
   readonly onDeleteSelectedTransactionsClicked = output<void>();
   readonly onExportCsvClicked = output<void>();
   readonly onSearchInput = output<Event>();
+  readonly onFiltersClearClicked = output<void>({ alias: 'onFiltersClear' });
+
+  searchInput = signal<string>('');
 
   onNewTransactionClick() {
     this.onNewTransactionClicked.emit();
@@ -40,5 +44,10 @@ export class TransactionsListHeaderToolbarComponent {
 
   onExportCsvClick() {
     this.onExportCsvClicked.emit();
+  }
+
+  onFiltersClear() {
+    this.searchInput.set('');
+    this.onFiltersClearClicked.emit();
   }
 }

@@ -114,6 +114,10 @@ export class TransactionsListComponent implements OnInit {
     this.dt.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
+  onFiltersClear() {
+    this.dt.clear();
+  }
+
   onExportCsvClicked() {
     this.dt.exportCSV();
   }

@@ -5,16 +5,31 @@
       severity="danger"
       label="Deletar"
       icon="pi pi-trash"
+      class="mr-2"
       outlined
       (onClick)="onDeleteSelectedTransactionsClick()"
       [disabled]="!selectedTransactions() || !selectedTransactions().length"
+    />
+    <p-button
+      label="Limpar Filtros"
+      class="w-full"
+      [outlined]="true"
+      icon="pi pi-filter-slash"
+      (click)="onFiltersClear()"
     />
   </ng-template>
 
   <ng-template #center>
     <p-iconfield class="w-full">
       <p-inputicon class="pi pi-search" />
-      <input pInputText type="text" placeholder="Pesquisar..." (input)="onSearchInput.emit($event)" class="w-full" />
+      <input
+        pInputText
+        type="text"
+        placeholder="Pesquisar..."
+        [(ngModel)]="searchInput"
+        (input)="onSearchInput.emit($event)"
+        class="w-full"
+      />
     </p-iconfield>
   </ng-template>
 
