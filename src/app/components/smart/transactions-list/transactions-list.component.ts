@@ -113,6 +113,9 @@ export class TransactionsListComponent implements OnInit {
   onSearchInput(event: Event) {
     this.dt.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
+  onFiltersClear() {
+    this.dt.clear();
+  }
 
   onExportCsvClicked() {
     this.dt.exportCSV();
