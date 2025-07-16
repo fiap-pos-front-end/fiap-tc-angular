@@ -156,7 +156,7 @@ export class TransactionsListComponent implements OnInit {
 
   deleteTransaction(transaction: Transaction) {
     this.buildAndDisplayConfirmationDialog(
-      `Você tem certeza que deseja deletar a transação #${transaction.id}?`,
+      `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category}) do dia ${transaction.date.toLocaleDateString('pt-BR')}?`,
       () => {
         this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe({
           next: () => this.loadTransactions(),
