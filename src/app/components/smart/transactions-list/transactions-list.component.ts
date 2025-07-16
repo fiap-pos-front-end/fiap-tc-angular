@@ -1,6 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { DialogTransactionFormComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
+import { DialogTransactionFormComponent, DialogUploaderComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
 import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -21,12 +21,17 @@ interface TransactionDialogState {
   isEditing: boolean;
 }
 
+interface UploaderDialogState {
+  visible: boolean;
+}
+
 @Component({
   selector: 'app-transactions-list',
   imports: [
     CommonModule,
     DialogTransactionFormComponent,
     TransactionsListHeaderToolbarComponent,
+    DialogUploaderComponent,
     ConfirmDialogModule,
     ConfirmPopupModule,
     ...PRIMENG_MODULES,
@@ -46,6 +51,7 @@ export class TransactionsListComponent implements OnInit {
   readonly selectedTransactions = signal<Transaction[]>([]);
   readonly currentTransaction = signal<Transaction | undefined>(undefined);
   readonly dialogState = signal<TransactionDialogState>({ visible: false, isEditing: false });
+  readonly dialogUploaderState = signal<UploaderDialogState>({ visible: false });
 
   ngOnInit() {
     this.initializeColumns();
@@ -184,5 +190,13 @@ export class TransactionsListComponent implements OnInit {
           this.showErrorMessage('Erro ao deletar transações', error.message);
         });
     });
+  }
+
+  openUploadTransaction(transaction: Transaction) {
+    this.dialogUploaderState.set({ visible: true });
+  }
+
+  hideUploadDialog() {
+    this.dialogUploaderState.set({ visible: false});
   }
 }

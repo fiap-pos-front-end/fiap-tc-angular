@@ -1,3 +1,11 @@
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #drop-area{
     width: 90%;
     height: 100%;
@@ -20,21 +28,18 @@
     flex-direction: column;
     margin-top: 10px;
     margin-bottom: 20px;
-    min-height: 195px;
+    min-height: 270px
 }
 
 #img-view{
-    min-width: 200px;
-    min-height: 175px;
-    max-width: 200px;
-    max-height: 175px;
+    width: 150px;
+    height: 125px;
     background-position: center;
     background-size: cover;
-    gap: 22px;
     font-size: 15px;
-    flex-direction: column;
     margin-bottom: 0;
     border-radius: 5px;
+    transition: transform 0.3s ease;
 }
 
 .square-add{
@@ -55,8 +60,8 @@
 .content-preview{
     display: flex;
     align-items: center;
-    gap: 25px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .square-img{
@@ -67,14 +72,17 @@
 }
 
 .main-text{
-    color: #00386C;
-    font-size: 28px;
-    font-weight: 600;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.secondary-text {
+  font-size: 16px;
 }
 
 .button-upload {
     text-align: center;
-    background: #00386C;
+    background: #10B981;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,12 +112,17 @@
     justify-content: center;
     position: relative;
     left: -10px;
-    top: 108px;
     cursor: pointer;
 }
 
 .close-img:hover{
     background-color: #4f060e;
+}
+
+.imagem-modal img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 @keyframes appear {

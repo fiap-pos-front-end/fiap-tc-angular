@@ -1,6 +1,7 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Component, Input} from '@angular/core';
+import { DialogModule } from 'primeng/dialog';
 
 interface ArchiveItem {
   source: SafeHtml;
@@ -12,14 +13,16 @@ interface ArchiveItem {
 
 @Component({
   selector: 'app-uploader',
-  imports: [CommonModule],
+  imports: [CommonModule, DialogModule],
   templateUrl: './uploader.component.html',
   styleUrl: './uploader.component.scss'
 })
 export class UploaderComponent {
   typeAccepted = ['application/pdf', 'image/jpeg', 'image/png'];
   arrObjArchive: ArchiveItem[] = [];
-  maxItems : number = 5;
+  maxItems : number = 3;
+  imageVisible = false;
+  selectedImage: SafeHtml | null = null;
 
   @Input() context : any;
 
@@ -58,8 +61,6 @@ export class UploaderComponent {
 
       if(arrArchivesError.length == 1){
         console.log(`O arquivo ${arrArchivesError[0]} possui um tipo não permitido`, 'ERRO:');
-      }else if (arrArchivesError.length > 1){
-        console.log(`Os arquivos ${arrArchivesError.join(', ')} possuem tipos não permitidos`, 'ERRO:');
       }
 
     }
@@ -108,4 +109,8 @@ export class UploaderComponent {
     }
   }
 
+  zoomImage(src: SafeHtml) {
+    this.selectedImage = src;
+    this.imageVisible = true;
+  }
 }
