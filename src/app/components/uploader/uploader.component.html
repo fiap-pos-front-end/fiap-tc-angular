@@ -13,7 +13,9 @@
                         >
                     </iframe>
                     <img  *ngIf="archive.tpdocume == 1" [src]="archive.source" id="img-view" alt="Anexo" (click)="zoomImage(archive.source)">
-                    <div class="close-img" (click)="removerImg(j)" [ngStyle]="{'top' : (archive.tpdocume == 2) ? '108px' : '60px'}">x</div>
+                    <div class="close-img" (click)="removeImg(j)" [ngStyle]="{'top' : (archive.tpdocume == 2) ? '108px' : '60px'}">
+                        <i class="pi pi-times"></i>
+                    </div>
                 </div>
                 <label class="square-add" for="input-file" [ngStyle]="{'width' : '200px', 'font-size' : '14px' , 'height' : '220px' }" *ngIf="arrObjArchive.length > 0 && maxItems > arrObjArchive.length">
                     <div>

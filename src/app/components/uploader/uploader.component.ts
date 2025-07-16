@@ -47,11 +47,11 @@ export class UploaderComponent {
           } else {
             let bufferLimpo = (result) ? result.split("base64,") : '';
             this.arrObjArchive.push({
-               source: (this.formataTipos(file.type).string == 'pdf' ) ? this.getSafeHtml(result) : result, 
+               source: (this.formatTypes(file.type).string == 'pdf' ) ? this.getSafeHtml(result) : result, 
                ctdocume: bufferLimpo[1], 
                name: file.name, 
                type: file.type,
-               tpdocume: this.formataTipos(file.type).id_type});
+               tpdocume: this.formatTypes(file.type).id_type});
           }
           cont++;
         } catch (error) {
@@ -95,11 +95,11 @@ export class UploaderComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(html);
   }
 
-  removerImg(index: number){
+  removeImg(index: number){
     this.arrObjArchive.splice(index,1);
   }
 
-  formataTipos(type: string){
+  formatTypes(type: string){
     if(['png','jpg','jpeg'].includes(type.split('/')[1])){
       return {string:'imagem', id_type:1}
     }else if(['pdf'].includes(type.split('/')[1])){

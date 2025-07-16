@@ -11,15 +11,15 @@
     height: 100%;
     padding: 20px;
     text-align: center;
-    background-color: #F5F5F5;
+    background-color: var(--p-gray-100);
     border-radius: 20px;
     font-size: 20px;
 }
 
 .content{
-    border: 4px dashed #b1b3b5;
+    border: 4px dashed var(--p-neutral-300);;
     color: #525354;
-    background-color: #F5F5F5;
+    background-color: var(--p-gray-100);
     width: 100%;
     display: flex;
     justify-content : center;
@@ -82,7 +82,7 @@
 
 .button-upload {
     text-align: center;
-    background: #10B981;
+    background: var(--p-emerald-500);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,7 +102,7 @@
 }
 
 .close-img{
-    background-color: #ab1827;
+    background-color: var(--p-red-700);
     border-radius: 50%;
     width: 24px;
     height: 24px;
@@ -116,7 +116,7 @@
 }
 
 .close-img:hover{
-    background-color: #4f060e;
+    background-color: var(--p-red-900);
 }
 
 .imagem-modal img {
