@@ -58,6 +58,7 @@
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td>
           <p-button icon="pi pi-pencil" class="mr-2" rounded outlined (click)="editTransaction(transaction)" />
+          <p-button icon="pi pi-upload" severity="secondary" class="mr-2" rounded outlined (click)="openUploadTransaction(transaction)" />
           <p-button icon="pi pi-trash" severity="danger" rounded outlined (click)="deleteTransaction(transaction)" />
         </td>
       </tr>
@@ -70,6 +71,11 @@
     [transactionToBeUpdated]="currentTransaction()"
     (onHide)="hideTransactionDialog()"
     (onSave)="saveTransaction($any($event))"
+  />
+  
+  <app-dialog-uploader
+    [isVisible]="dialogUploaderState().visible"
+    (onHide)="hideUploadDialog()"
   />
 
   <p-confirmDialog [style]="{ width: '450px' }" />

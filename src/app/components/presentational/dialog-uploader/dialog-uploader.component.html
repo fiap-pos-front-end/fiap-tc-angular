@@ -1,0 +1,15 @@
+<p-dialog
+  [visible]="isVisible()"
+  (visibleChange)="onHide.emit()"
+  [style]="{ width: '775px', height: '450px' }"
+  [header]="'Anexos'"
+  [modal]="true"
+>
+  <ng-template pTemplate="content">
+    <app-uploader></app-uploader>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" text (click)="onHide.emit()" />
+  </ng-template>
+</p-dialog>
