@@ -1,6 +1,11 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { DialogTransactionFormComponent, DialogUploaderComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
+import { getLastEvent } from '@fiap-pos-front-end/fiap-tc-shared';
+import {
+  DialogTransactionFormComponent,
+  DialogUploaderComponent,
+  TransactionsListHeaderToolbarComponent,
+} from '@fiap-tc-angular/components';
 import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -54,6 +59,13 @@ export class TransactionsListComponent implements OnInit {
   readonly dialogUploaderState = signal<UploaderDialogState>({ visible: false });
 
   ngOnInit() {
+    const token = getLastEvent('user-logged-in');
+    console.log('## CL ## token', token);
+    if (!token) {
+      console.log('## CL ## NAO TEM OTKEN!!!');
+      // this.router.navigate(['/login']);
+    }
+
     this.initializeColumns();
     this.loadTransactions();
   }
@@ -197,6 +209,6 @@ export class TransactionsListComponent implements OnInit {
   }
 
   hideUploadDialog() {
-    this.dialogUploaderState.set({ visible: false});
+    this.dialogUploaderState.set({ visible: false });
   }
 }
