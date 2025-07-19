@@ -72,7 +72,6 @@ export class TransactionsListComponent implements OnInit {
 
   private initializeColumns(): void {
     this.cols.set([
-      { field: 'id', header: '#', customExportHeader: 'ID da Transação' },
       { field: 'type', header: 'Tipo' },
       { field: 'amount', header: 'Valor' },
       { field: 'category', header: 'Categoria' },

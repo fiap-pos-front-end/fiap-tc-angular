@@ -51,7 +51,6 @@
     <ng-template pTemplate="body" let-transaction>
       <tr>
         <td><p-tableCheckbox [value]="transaction" /></td>
-        <td>{{ transaction.id | slice: 0 : 4 }}...</td>
         <td><p-tag [value]="transaction.type" [severity]="getTransactionTypeColor(transaction.type)" /></td>
         <td>{{ transaction.amount.value | currency: 'BRL' }}</td>
         <td>{{ transaction.category | titlecase }}</td>
