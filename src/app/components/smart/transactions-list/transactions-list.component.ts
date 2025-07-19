@@ -1,6 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { getLastEvent } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import {
   DialogTransactionFormComponent,
   DialogUploaderComponent,
@@ -8,6 +7,7 @@ import {
 } from '@fiap-tc-angular/components';
 import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { Category, TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -47,7 +47,10 @@ interface UploaderDialogState {
 export class TransactionsListComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly transactionService = inject(TransactionService);
   private readonly manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
+
+  readonly categories = input.required<Category[]>();
 
   @ViewChild('dt') dt!: Table;
 
@@ -59,13 +62,6 @@ export class TransactionsListComponent implements OnInit {
   readonly dialogUploaderState = signal<UploaderDialogState>({ visible: false });
 
   ngOnInit() {
-    const token = getLastEvent('user-logged-in');
-    console.log('## CL ## token', token);
-    if (!token) {
-      console.log('## CL ## NAO TEM OTKEN!!!');
-      // this.router.navigate(['/login']);
-    }
-
     this.initializeColumns();
     this.loadTransactions();
   }
@@ -80,8 +76,10 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    this.manageTransactionsUseCase.getAllTransactions().subscribe({
-      next: (list) => this.transactions.set(list),
+    this.transactionService.getAll().subscribe({
+      next: (list) => {
+        this.transactions.set(list.map((t) => Transaction.appendCategory(t, t.categoryId, this.categories())));
+      },
       error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
     });
   }
