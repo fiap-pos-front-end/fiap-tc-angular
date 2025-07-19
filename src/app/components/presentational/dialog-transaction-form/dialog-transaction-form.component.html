@@ -46,26 +46,23 @@
           optionLabel="label"
           optionValue="value"
           placeholder="Selecione o tipo da transação"
+          appendTo="body"
           class="w-full md:w-56"
         />
       </div>
 
       <div>
         <label for="category" class="block mb-2 font-bold">Categoria</label>
-        <input
-          pInputText
-          type="text"
-          id="category"
-          placeholder="Digite sua categoria"
+        <p-select
+          [options]="categories()"
           formControlName="category"
           (invalid)="isInvalid('category')"
-          required
-          autofocus
-          fluid
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione sua categoria"
+          appendTo="body"
+          class="w-full md:w-56"
         />
-        @if (isInvalid('category')) {
-          <p-message severity="error" size="small" variant="simple">Categoria é obrigatória.</p-message>
-        }
       </div>
     </form>
   </ng-template>

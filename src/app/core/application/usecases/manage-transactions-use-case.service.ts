@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export interface CreateTransactionDTO {
   type: TransactionType;
   amount: number;
-  category: string;
+  category: number;
   date: Date;
 }
 
@@ -23,13 +23,19 @@ export class ManageTransactionsUseCaseService {
   }
 
   public createTransaction(dto: CreateTransactionDTO): Observable<Transaction> {
-    const transaction = Transaction.create(this.idGenerator.generate(), dto.type, dto.amount, dto.date, dto.category);
+    const transaction = Transaction.create(
+      this.idGenerator.generate(),
+      dto.type,
+      dto.amount,
+      dto.date,
+      dto.category.toString(),
+    );
 
     return this.repository.create(transaction);
   }
 
   public updateTransaction(id: string, dto: CreateTransactionDTO): Observable<Transaction> {
-    const transaction = Transaction.create(id, dto.type, dto.amount, dto.date || new Date(), dto.category);
+    const transaction = Transaction.create(id, dto.type, dto.amount, dto.date || new Date(), dto.category.toString());
 
     return this.repository.update(transaction);
   }

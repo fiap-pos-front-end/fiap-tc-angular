@@ -1,6 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { Category } from '@fiap-tc-angular/infrastructure';
 import { Button } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
@@ -32,6 +33,7 @@ type TransactionTypeSelectOption = {
   templateUrl: './dialog-transaction-form.component.html',
 })
 export class DialogTransactionFormComponent {
+  readonly categories = input.required<Category[]>();
   readonly isEditing = input<boolean>(false);
   readonly isVisible = input.required<boolean>();
   readonly transactionToBeUpdated = input<Transaction | undefined>(undefined);
@@ -44,6 +46,7 @@ export class DialogTransactionFormComponent {
         this.transactionForm.patchValue({
           ...this.transactionToBeUpdated()!,
           amount: this.transactionToBeUpdated()!.amount.value,
+          category: this.categories().find((c) => c.id.toString() === this.transactionToBeUpdated()!.categoryId)?.id,
         });
 
         this.transactionForm.updateValueAndValidity();

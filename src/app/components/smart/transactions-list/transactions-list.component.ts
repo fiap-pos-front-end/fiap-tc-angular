@@ -1,8 +1,13 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { DialogTransactionFormComponent, DialogUploaderComponent, TransactionsListHeaderToolbarComponent } from '@fiap-tc-angular/components';
+import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  DialogTransactionFormComponent,
+  DialogUploaderComponent,
+  TransactionsListHeaderToolbarComponent,
+} from '@fiap-tc-angular/components';
 import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { Category, TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -42,7 +47,10 @@ interface UploaderDialogState {
 export class TransactionsListComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly transactionService = inject(TransactionService);
   private readonly manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
+
+  readonly categories = input.required<Category[]>();
 
   @ViewChild('dt') dt!: Table;
 
@@ -60,7 +68,6 @@ export class TransactionsListComponent implements OnInit {
 
   private initializeColumns(): void {
     this.cols.set([
-      { field: 'id', header: '#', customExportHeader: 'ID da Transação' },
       { field: 'type', header: 'Tipo' },
       { field: 'amount', header: 'Valor' },
       { field: 'category', header: 'Categoria' },
@@ -69,8 +76,10 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    this.manageTransactionsUseCase.getAllTransactions().subscribe({
-      next: (list) => this.transactions.set(list),
+    this.transactionService.getAll().subscribe({
+      next: (list) => {
+        this.transactions.set(list.map((t) => Transaction.appendCategory(t, t.categoryId, this.categories())));
+      },
       error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
     });
   }
@@ -146,8 +155,8 @@ export class TransactionsListComponent implements OnInit {
     const dto: CreateTransactionDTO = { ...transactionData, amount: transactionData.amount };
 
     const operation = transactionData.id
-      ? this.manageTransactionsUseCase.updateTransaction(transactionData.id, dto)
-      : this.manageTransactionsUseCase.createTransaction(dto);
+      ? this.transactionService.update(transactionData.id, dto)
+      : this.transactionService.create(dto);
 
     operation.subscribe({
       next: () => {
@@ -164,7 +173,7 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category}) do dia ${transaction.date.toLocaleDateString('pt-BR')}?`,
       () => {
-        this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe({
+        this.transactionService.delete(transaction.id).subscribe({
           next: () => this.loadTransactions(),
           error: (error) => this.showErrorMessage('Erro ao deletar transação', error.message),
         });
@@ -178,9 +187,7 @@ export class TransactionsListComponent implements OnInit {
 
     this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
       Promise.all(
-        selectedTransactions.map((transaction) =>
-          firstValueFrom(this.manageTransactionsUseCase.deleteTransaction(transaction.id)),
-        ),
+        selectedTransactions.map((transaction) => firstValueFrom(this.transactionService.delete(transaction.id))),
       )
         .then(() => {
           this.loadTransactions();
@@ -197,6 +204,6 @@ export class TransactionsListComponent implements OnInit {
   }
 
   hideUploadDialog() {
-    this.dialogUploaderState.set({ visible: false});
+    this.dialogUploaderState.set({ visible: false });
   }
 }
