@@ -10,7 +10,6 @@ export class Transaction {
     public readonly date: Date,
     public readonly categoryId: string,
     public readonly category?: string,
-    public readonly amountNumber?: number,
   ) {}
 
   public static create(id: string, type: TransactionType, amount: number, date: Date, category: string): Transaction {
@@ -27,7 +26,6 @@ export class Transaction {
       transaction.date,
       transaction.categoryId,
       category?.name,
-      transaction.amount.value,
     );
   }
 

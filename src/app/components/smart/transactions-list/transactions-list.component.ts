@@ -66,7 +66,7 @@ export class TransactionsListComponent implements OnInit {
   private initializeColumns(): void {
     this.cols.set([
       { field: 'type', header: 'Tipo' },
-      { field: 'amountNumber', header: 'Valor' },
+      { field: 'amount.value', header: 'Valor' },
       { field: 'category', header: 'Categoria' },
       { field: 'date', header: 'Data' },
     ]);

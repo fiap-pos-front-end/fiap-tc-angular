@@ -34,9 +34,9 @@
               {{ col.header }}
               <p-sortIcon field="{{ col.field }}" />
               <p-columnFilter
-                [type]="col.field === 'amountNumber' ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
+                [type]="col.field.includes('amount') ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
                 field="{{ col.field }}"
-                [currency]="col.field === 'amountNumber' ? 'BRL' : undefined"
+                [currency]="col.field.includes('amount') ? 'BRL' : undefined"
                 display="menu"
                 class="ml-auto"
               />
@@ -52,7 +52,7 @@
       <tr>
         <td><p-tableCheckbox [value]="transaction" /></td>
         <td><p-tag [value]="transaction.type" [severity]="getTransactionTypeColor(transaction.type)" /></td>
-        <td>{{ transaction.amountNumber | currency: 'BRL' }}</td>
+        <td>{{ transaction.amount.value | currency: 'BRL' }}</td>
         <td>{{ transaction.category | titlecase }}</td>
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td class="flex pr-4 justify-content-end">
