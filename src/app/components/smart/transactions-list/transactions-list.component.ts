@@ -173,7 +173,7 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category}) do dia ${transaction.date.toLocaleDateString('pt-BR')}?`,
       () => {
-        this.manageTransactionsUseCase.deleteTransaction(transaction.id).subscribe({
+        this.transactionService.delete(transaction.id).subscribe({
           next: () => this.loadTransactions(),
           error: (error) => this.showErrorMessage('Erro ao deletar transação', error.message),
         });
@@ -187,9 +187,7 @@ export class TransactionsListComponent implements OnInit {
 
     this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
       Promise.all(
-        selectedTransactions.map((transaction) =>
-          firstValueFrom(this.manageTransactionsUseCase.deleteTransaction(transaction.id)),
-        ),
+        selectedTransactions.map((transaction) => firstValueFrom(this.transactionService.delete(transaction.id))),
       )
         .then(() => {
           this.loadTransactions();

@@ -50,8 +50,9 @@ export class TransactionService {
   }
 
   delete(id: string): Observable<void> {
-    throw new Error('Method not implemented.');
+    return this.httpClient.delete<void>(`${this.transactionBaseUrl}/${id}`);
   }
+
   getById(id: string): Observable<Transaction> {
     throw new Error('Method not implemented.');
   }
