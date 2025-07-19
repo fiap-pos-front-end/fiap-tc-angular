@@ -1,5 +1,5 @@
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
 import { Observable } from 'rxjs';
-import { Transaction } from '../models/transaction.model';
 
 export interface ITransactionRepository {
   create(transaction: Transaction): Observable<Transaction>;

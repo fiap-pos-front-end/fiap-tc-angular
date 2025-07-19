@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
+import { Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import { ID_GENERATOR_TOKEN, TRANSACTION_REPOSITORY_TOKEN } from '@fiap-tc-angular/core/application';
-import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { Observable } from 'rxjs';
 
 export interface CreateTransactionDTO {
