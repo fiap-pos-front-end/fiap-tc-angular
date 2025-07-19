@@ -10,6 +10,7 @@ export class Transaction {
     public readonly date: Date,
     public readonly categoryId: string,
     public readonly category?: string,
+    public readonly amountNumber?: number,
   ) {}
 
   public static create(id: string, type: TransactionType, amount: number, date: Date, category: string): Transaction {
@@ -18,6 +19,7 @@ export class Transaction {
 
   public static appendCategory(transaction: Transaction, categoryId: string, categories: Category[]): Transaction {
     const category = categories.find((c) => c.id === parseInt(categoryId));
+
     return new Transaction(
       transaction.id,
       transaction.type,
@@ -25,6 +27,7 @@ export class Transaction {
       transaction.date,
       transaction.categoryId,
       category?.name,
+      transaction.amount.value,
     );
   }
 
