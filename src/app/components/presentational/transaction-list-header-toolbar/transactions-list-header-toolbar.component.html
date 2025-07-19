@@ -10,13 +10,6 @@
       (onClick)="onDeleteSelectedTransactionsClick()"
       [disabled]="!selectedTransactions() || !selectedTransactions().length"
     />
-    <p-button
-      label="Limpar Filtros"
-      class="w-full"
-      [outlined]="true"
-      icon="pi pi-filter-slash"
-      (click)="onFiltersClear()"
-    />
   </ng-template>
 
   <ng-template #center>
@@ -34,6 +27,13 @@
   </ng-template>
 
   <ng-template #end>
-    <p-button label="Exportar" icon="pi pi-upload" severity="secondary" (onClick)="onExportCsvClick()" />
+    <p-button
+      label="Limpar Filtros"
+      class="mr-2 w-full"
+      [outlined]="true"
+      icon="pi pi-filter-slash"
+      (click)="onFiltersClear()"
+    />
+    <p-button icon="pi pi-download" severity="secondary" (onClick)="onExportCsvClick()" />
   </ng-template>
 </p-toolbar>
