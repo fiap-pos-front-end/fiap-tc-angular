@@ -18,6 +18,7 @@ export class Transaction {
 
   public static appendCategory(transaction: Transaction, categoryId: string, categories: Category[]): Transaction {
     const category = categories.find((c) => c.id === parseInt(categoryId));
+
     return new Transaction(
       transaction.id,
       transaction.type,

@@ -34,9 +34,9 @@
               {{ col.header }}
               <p-sortIcon field="{{ col.field }}" />
               <p-columnFilter
-                [type]="col.field === 'amount' ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
+                [type]="col.field.includes('amount') ? 'numeric' : col.field === 'date' ? 'date' : 'text'"
                 field="{{ col.field }}"
-                currency="BRL"
+                [currency]="col.field.includes('amount') ? 'BRL' : undefined"
                 display="menu"
                 class="ml-auto"
               />
