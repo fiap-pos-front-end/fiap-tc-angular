@@ -1,15 +1,17 @@
 <p-toolbar class="mb-6">
   <ng-template #start>
-    <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
-    <p-button
-      severity="danger"
-      label="Deletar"
-      icon="pi pi-trash"
-      class="mr-2"
-      outlined
-      (onClick)="onDeleteSelectedTransactionsClick()"
-      [disabled]="!selectedTransactions() || !selectedTransactions().length"
-    />
+    <div style="min-width: 216px">
+      <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
+      <p-button
+        severity="danger"
+        label="Deletar"
+        icon="pi pi-trash"
+        class="mr-2"
+        outlined
+        (onClick)="onDeleteSelectedTransactionsClick()"
+        [hidden]="!selectedTransactions() || !selectedTransactions().length"
+      />
+    </div>
   </ng-template>
 
   <ng-template #center>
@@ -28,8 +30,8 @@
 
   <ng-template #end>
     <p-button
-      label="Limpar Filtros"
       class="mr-2 w-full"
+      severity="warn"
       [outlined]="true"
       icon="pi pi-filter-slash"
       (click)="onFiltersClear()"
