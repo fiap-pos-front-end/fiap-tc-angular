@@ -46,6 +46,7 @@ export class DialogTransactionFormComponent {
         this.transactionForm.patchValue({
           ...this.transactionToBeUpdated()!,
           amount: this.transactionToBeUpdated()!.amount.value,
+          category: this.categories().find((c) => c.id.toString() === this.transactionToBeUpdated()!.categoryId)?.id,
         });
 
         this.transactionForm.updateValueAndValidity();

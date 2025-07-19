@@ -43,9 +43,12 @@ export class TransactionService {
       .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
   }
 
-  update(transaction: Transaction): Observable<Transaction> {
-    throw new Error('Method not implemented.');
+  update(id: string, transaction: TransactionDTO): Observable<Transaction> {
+    return this.httpClient
+      .put<TransactionPayload>(`${this.transactionBaseUrl}/${id}`, this.buildTransactionPayloadFromDTO(transaction))
+      .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
   }
+
   delete(id: string): Observable<void> {
     throw new Error('Method not implemented.');
   }

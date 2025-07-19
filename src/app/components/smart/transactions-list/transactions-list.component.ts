@@ -155,7 +155,7 @@ export class TransactionsListComponent implements OnInit {
     const dto: CreateTransactionDTO = { ...transactionData, amount: transactionData.amount };
 
     const operation = transactionData.id
-      ? this.manageTransactionsUseCase.updateTransaction(transactionData.id, dto)
+      ? this.transactionService.update(transactionData.id, dto)
       : this.transactionService.create(dto);
 
     operation.subscribe({
