@@ -1,5 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import { emitEvent } from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
   DialogUploaderComponent,
@@ -76,6 +77,7 @@ export class TransactionsListComponent implements OnInit {
     this.transactionService.getAll().subscribe({
       next: (list) => {
         this.transactions.set(list.map((t) => Transaction.appendCategory(t, t.categoryId, this.categories())));
+        emitEvent('transactions-updated', this.transactions());
       },
       error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
     });
