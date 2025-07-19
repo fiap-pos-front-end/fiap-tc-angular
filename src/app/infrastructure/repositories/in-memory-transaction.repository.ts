@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ITransactionRepository, Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
+import { Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import { ITransactionRepository } from '@fiap-tc-angular/core/domain';
 import { Observable, of } from 'rxjs';
 
 @Injectable()

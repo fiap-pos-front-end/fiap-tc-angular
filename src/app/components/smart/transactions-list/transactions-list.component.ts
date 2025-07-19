@@ -1,14 +1,13 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
-import { emitEvent } from '@fiap-pos-front-end/fiap-tc-shared';
+import { CategoryDTO, emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
   DialogUploaderComponent,
   TransactionsListHeaderToolbarComponent,
 } from '@fiap-tc-angular/components';
 import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
-import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
-import { Category, TransactionService } from '@fiap-tc-angular/infrastructure';
+import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Table } from 'primeng/table';
@@ -48,7 +47,7 @@ export class TransactionsListComponent implements OnInit {
   private readonly transactionService = inject(TransactionService);
   private readonly manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
-  readonly categories = input.required<Category[]>();
+  readonly categories = input.required<CategoryDTO[]>();
 
   @ViewChild('dt') dt!: Table;
 
@@ -77,7 +76,7 @@ export class TransactionsListComponent implements OnInit {
     this.transactionService.getAll().subscribe({
       next: (list) => {
         this.transactions.set(list.map((t) => Transaction.appendCategory(t, t.categoryId, this.categories())));
-        emitEvent('transactions-updated', this.transactions());
+        emitEvent(EVENTS.TRANSACTIONS_UPDATED, this.transactions());
       },
       error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
     });

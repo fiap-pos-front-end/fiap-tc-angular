@@ -1,6 +1,6 @@
 import { Component, input, InputSignal, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Transaction } from '@fiap-tc-angular/core/domain';
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
 import { Button } from 'primeng/button';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';

@@ -1,7 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
-import { Category } from '@fiap-tc-angular/infrastructure';
+import { CategoryDTO, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import { Button } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
@@ -33,7 +32,7 @@ type TransactionTypeSelectOption = {
   templateUrl: './dialog-transaction-form.component.html',
 })
 export class DialogTransactionFormComponent {
-  readonly categories = input.required<Category[]>();
+  readonly categories = input.required<CategoryDTO[]>();
   readonly isEditing = input<boolean>(false);
   readonly isVisible = input.required<boolean>();
   readonly transactionToBeUpdated = input<Transaction | undefined>(undefined);
@@ -84,13 +83,12 @@ export class DialogTransactionFormComponent {
   saveTransaction() {
     this.formSubmitted.set(true);
 
-    if (this.transactionForm.valid) {
-      this.onSave.emit(this.transactionForm.value);
-      this.transactionForm.reset();
-      this.formSubmitted.set(false);
-    } else {
-      console.log('## CL ## Inválido!');
-      // TODO: vamos exibir um toast de erro aqui também?
+    if (!this.transactionForm.valid) {
+      return;
     }
+
+    this.onSave.emit(this.transactionForm.value);
+    this.transactionForm.reset();
+    this.formSubmitted.set(false);
   }
 }

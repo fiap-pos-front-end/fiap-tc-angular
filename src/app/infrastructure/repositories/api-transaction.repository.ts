@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ITransactionRepository, Transaction } from '@fiap-tc-angular/core/domain';
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
+import { ITransactionRepository } from '@fiap-tc-angular/core/domain';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 

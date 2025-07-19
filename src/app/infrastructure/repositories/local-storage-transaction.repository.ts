@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ITransactionRepository, Transaction } from '@fiap-tc-angular/core/domain';
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
+import { ITransactionRepository } from '@fiap-tc-angular/core/domain';
 import { Observable, of } from 'rxjs';
 
 @Injectable()
@@ -7,7 +8,7 @@ export class LocalStorageTransactionRepository implements ITransactionRepository
   private readonly STORAGE_KEY = 'transactions';
 
   private saveTransactions(transactions: Transaction[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(transactions.map((t) => t.toJSON())));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(transactions));
   }
 
   private getStoredTransactions(): Transaction[] {
