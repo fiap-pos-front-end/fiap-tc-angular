@@ -1,21 +1,6 @@
 <p-toolbar class="mb-6">
   <ng-template #start>
-    <div style="min-width: 216px">
-      <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
-      <p-button
-        severity="danger"
-        label="Deletar"
-        icon="pi pi-trash"
-        class="mr-2"
-        outlined
-        (onClick)="onDeleteSelectedTransactionsClick()"
-        [hidden]="!selectedTransactions() || !selectedTransactions().length"
-      />
-    </div>
-  </ng-template>
-
-  <ng-template #center>
-    <p-iconfield class="w-full">
+    <p-iconfield class="mr-2 w-full">
       <p-inputicon class="pi pi-search" />
       <input
         pInputText
@@ -26,16 +11,24 @@
         class="w-full"
       />
     </p-iconfield>
+    <p-button class="mr-2" severity="warn" [outlined]="true" icon="pi pi-filter-slash" (click)="onFiltersClear()" />
+    <p-button class="mr-2" icon="pi pi-download" severity="secondary" (onClick)="onExportCsvClick()" />
   </ng-template>
+
+  <!-- <ng-template #center>
+
+  </ng-template> -->
 
   <ng-template #end>
     <p-button
-      class="mr-2 w-full"
-      severity="warn"
-      [outlined]="true"
-      icon="pi pi-filter-slash"
-      (click)="onFiltersClear()"
+      severity="danger"
+      label="Deletar selecionados"
+      icon="pi pi-trash"
+      class="mr-2"
+      outlined
+      (onClick)="onDeleteSelectedTransactionsClick()"
+      [hidden]="!selectedTransactions() || !selectedTransactions().length"
     />
-    <p-button icon="pi pi-download" severity="secondary" (onClick)="onExportCsvClick()" />
+    <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
   </ng-template>
 </p-toolbar>
