@@ -10,30 +10,18 @@
       <div class="flex gap-3">
         <div>
           <label for="amount" class="block mb-2 font-bold">Valor</label>
-          <p-inputnumber
-            id="amount"
-            formControlName="amount"
-            (invalid)="isInvalid('amount')"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            fluid
-          />
-          @if (isInvalid('amount')) {
+          <p-inputnumber id="amount" formControlName="amount" mode="currency" currency="BRL" locale="pt-BR" fluid />
+          @if (amountInvalid()) {
             <p-message severity="error" size="small" variant="simple">Valor é obrigatório.</p-message>
           }
         </div>
 
         <div>
           <label for="date" class="block mb-2 font-bold">Data</label>
-          <p-datepicker
-            id="date"
-            formControlName="date"
-            (invalid)="isInvalid('date')"
-            fluid
-            dateFormat="dd/mm/yy"
-            appendTo="body"
-          />
+          <p-datepicker id="date" formControlName="date" fluid dateFormat="dd/mm/yy" appendTo="body" />
+          @if (dateInvalid()) {
+            <p-message severity="error" size="small" variant="simple">Data é obrigatória.</p-message>
+          }
         </div>
       </div>
 
@@ -42,13 +30,15 @@
         <p-select
           [options]="transactionTypes"
           formControlName="type"
-          (invalid)="isInvalid('type')"
           optionLabel="label"
           optionValue="value"
           placeholder="Selecione o tipo da transação"
           appendTo="body"
           class="w-full md:w-56"
         />
+        @if (typeInvalid()) {
+          <p-message severity="error" size="small" variant="simple">Tipo é obrigatório.</p-message>
+        }
       </div>
 
       <div>
@@ -56,13 +46,15 @@
         <p-select
           [options]="categories()"
           formControlName="category"
-          (invalid)="isInvalid('category')"
           optionLabel="name"
           optionValue="id"
           placeholder="Selecione sua categoria"
           appendTo="body"
           class="w-full md:w-56"
         />
+        @if (categoryInvalid()) {
+          <p-message severity="error" size="small" variant="simple">Categoria é obrigatória.</p-message>
+        }
       </div>
     </form>
   </ng-template>

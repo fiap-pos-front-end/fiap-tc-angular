@@ -57,6 +57,10 @@ export class DialogTransactionFormComponent {
   readonly formSubmitted = signal<boolean>(false);
   readonly dialogTitle = computed(() => (this.isEditing() ? 'Editar transação' : 'Nova transação'));
 
+  readonly amountInvalid = this.createControlValidation('amount');
+  readonly dateInvalid = this.createControlValidation('date');
+  readonly typeInvalid = this.createControlValidation('type');
+  readonly categoryInvalid = this.createControlValidation('category');
   readonly transactionTypes: Array<TransactionTypeSelectOption> = Object.entries(TransactionType).map(([_, label]) => ({
     label,
     value: label,
@@ -70,9 +74,11 @@ export class DialogTransactionFormComponent {
     type: new FormControl(TransactionType.INCOME, [Validators.required]),
   });
 
-  isInvalid(controlName: string) {
-    const control = this.transactionForm.get(controlName);
-    return control?.invalid && (control.touched || this.formSubmitted());
+  private createControlValidation(controlName: string) {
+    return computed(() => {
+      const control = this.transactionForm.get(controlName);
+      return control?.invalid && (control.touched || this.formSubmitted());
+    });
   }
 
   saveTransaction() {
