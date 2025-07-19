@@ -10,7 +10,6 @@ import { Transaction, TransactionType } from '@fiap-tc-angular/core/domain';
 import { Category, TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
@@ -18,7 +17,6 @@ import { PRIMENG_MODULES } from './imports';
 interface Column {
   field: string;
   header: string;
-  customExportHeader?: string;
 }
 
 interface TransactionDialogState {
@@ -38,7 +36,6 @@ interface UploaderDialogState {
     TransactionsListHeaderToolbarComponent,
     DialogUploaderComponent,
     ConfirmDialogModule,
-    ConfirmPopupModule,
     ...PRIMENG_MODULES,
   ],
   providers: [MessageService, ConfirmationService, ManageTransactionsUseCaseService, AsyncPipe],
