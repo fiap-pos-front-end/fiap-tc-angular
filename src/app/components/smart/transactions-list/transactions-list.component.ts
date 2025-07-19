@@ -6,7 +6,6 @@ import {
   DialogUploaderComponent,
   TransactionsListHeaderToolbarComponent,
 } from '@fiap-tc-angular/components';
-import { CreateTransactionDTO, ManageTransactionsUseCaseService } from '@fiap-tc-angular/core/application';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -28,6 +27,13 @@ interface UploaderDialogState {
   visible: boolean;
 }
 
+export interface CreateTransactionDTO {
+  type: TransactionType;
+  amount: number;
+  category: number;
+  date: Date;
+}
+
 @Component({
   selector: 'app-transactions-list',
   imports: [
@@ -38,14 +44,13 @@ interface UploaderDialogState {
     ConfirmDialogModule,
     ...PRIMENG_MODULES,
   ],
-  providers: [MessageService, ConfirmationService, ManageTransactionsUseCaseService, AsyncPipe],
+  providers: [MessageService, ConfirmationService, AsyncPipe],
   templateUrl: './transactions-list.component.html',
 })
 export class TransactionsListComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transactionService = inject(TransactionService);
-  private readonly manageTransactionsUseCase = inject(ManageTransactionsUseCaseService);
 
   readonly categories = input.required<CategoryDTO[]>();
 
