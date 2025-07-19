@@ -19,32 +19,7 @@ export class ApiTransactionRepository implements ITransactionRepository {
   private readonly transactionBaseUrl = `${environment.apiUrl}/transfers`;
 
   create(transaction: Transaction): Observable<Transaction> {
-    this.httpClient
-      .post<any>(
-        `${environment.apiUrl}/categories`,
-        { name: 'Luz' },
-        {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0B0ZXN0ZS5jb20iLCJpYXQiOjE3NTI3MTM2OTIsImV4cCI6MTc1MjcxNzI5Mn0.1orGUZrYtFrhCD7T05fM7FYhlKt3ITFss0--4MN2PzU`,
-          }),
-        },
-      )
-      .subscribe((response) => {
-        console.log(response);
-        return this.httpClient
-          .post<Transaction>(this.transactionBaseUrl, this.buildTransactionPayload(transaction), {
-            headers: new HttpHeaders({
-              'Content-Type': 'application/json',
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0B0ZXN0ZS5jb20iLCJpYXQiOjE3NTI3MTM2OTIsImV4cCI6MTc1MjcxNzI5Mn0.1orGUZrYtFrhCD7T05fM7FYhlKt3ITFss0--4MN2PzU`,
-            }),
-          })
-          .subscribe((response) => {
-            console.log(response);
-          });
-      });
-
-    return of(transaction);
+    return this.httpClient.post<Transaction>(this.transactionBaseUrl, this.buildTransactionPayload(transaction));
   }
 
   update(transaction: Transaction): Observable<Transaction> {
