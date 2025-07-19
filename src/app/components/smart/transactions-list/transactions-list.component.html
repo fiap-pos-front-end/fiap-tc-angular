@@ -65,6 +65,7 @@
   </p-table>
 
   <app-dialog-transaction-form
+    [categories]="categories()"
     [isVisible]="dialogState().visible"
     [isEditing]="dialogState().isEditing"
     [transactionToBeUpdated]="currentTransaction()"
