@@ -15,10 +15,6 @@
     <p-button class="mr-2" icon="pi pi-download" severity="secondary" (onClick)="onExportCsvClick()" />
   </ng-template>
 
-  <!-- <ng-template #center>
-
-  </ng-template> -->
-
   <ng-template #end>
     <p-button
       severity="danger"
@@ -29,6 +25,6 @@
       (onClick)="onDeleteSelectedTransactionsClick()"
       [hidden]="!selectedTransactions() || !selectedTransactions().length"
     />
-    <p-button label="Nova" icon="pi pi-plus" class="mr-2" (onClick)="onNewTransactionClick()" />
+    <p-button label="Nova" icon="pi pi-plus" (onClick)="onNewTransactionClick()" />
   </ng-template>
 </p-toolbar>
