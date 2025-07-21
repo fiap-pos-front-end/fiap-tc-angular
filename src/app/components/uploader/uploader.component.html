@@ -10,13 +10,7 @@
         <div *ngFor="let archive of arrObjArchive; let j = index" class="square-img">
           <iframe *ngIf="archive.tpdocume == 2" [src]="archive.source" width="170px" height="220px" frameborder="0">
           </iframe>
-          <img
-            *ngIf="archive.tpdocume == 1"
-            [src]="archive.source"
-            id="img-view"
-            alt="Anexo"
-            (click)="zoomImage(archive.source)"
-          />
+          <img *ngIf="archive.tpdocume == 1" [src]="archive.source" id="img-view" alt="Anexo" />
           <div class="close-img" (click)="removeImg(j)" [ngStyle]="{ top: archive.tpdocume == 2 ? '108px' : '60px' }">
             <i class="pi pi-times"></i>
           </div>
@@ -52,12 +46,5 @@
       <div>Escolha um arquivo do computador para fazer upload</div>
     </label>
     <input type="file" [accept]="typeAccepted" id="input-file" hidden #inputFile (change)="onSelectFile($event)" />
-  </div>
-</div>
-
-<!-- Modal da imagem -->
-<div *ngIf="imageVisible" class="expanded-file" (click)="closeZoom()">
-  <div class="file-content">
-    <img [src]="selectedImage" id="img-expanded" />
   </div>
 </div>

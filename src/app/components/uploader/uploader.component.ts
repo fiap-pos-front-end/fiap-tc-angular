@@ -124,14 +124,4 @@ export class UploaderComponent {
       return { string: 'Não Identificado', id_type: 0 };
     }
   }
-
-  zoomImage(src: SafeHtml) {
-    this.selectedImage = src;
-    this.imageVisible = true;
-  }
-
-  closeZoom() {
-    this.selectedImage = null;
-    this.imageVisible = false;
-  }
 }
