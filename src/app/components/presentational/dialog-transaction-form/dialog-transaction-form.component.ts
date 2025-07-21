@@ -89,6 +89,7 @@ export class DialogTransactionFormComponent {
 
     this.onSave.emit(this.transactionForm.value);
     this.transactionForm.reset();
+    this.transactionForm.patchValue({ amount: 0, date: new Date() });
     this.formSubmitted.set(false);
   }
 }
