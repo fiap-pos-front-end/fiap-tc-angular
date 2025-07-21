@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -16,7 +15,6 @@ import { Toast } from 'primeng/toast';
 
 export const PRIMENG_MODULES = [
   FormsModule,
-  HttpClientModule, // TODO: Remover
   ReactiveFormsModule,
   BadgeModule,
   ButtonModule,
