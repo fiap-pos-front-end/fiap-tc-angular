@@ -1,17 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Transaction, TransactionType, TransfersResponsePayload } from '@fiap-pos-front-end/fiap-tc-shared';
+import {
+  Transaction,
+  TransactionDTO,
+  TransactionType,
+  TransfersResponsePayload,
+} from '@fiap-pos-front-end/fiap-tc-shared';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-// TODO: atualizar esse tipo para o TransactionDTO do shared (porém, como vai precisar mexer no form, deixei para depois)
-type TransactionDTO = {
-  id?: string;
-  amount: number;
-  category: number;
-  date: Date;
-  type: TransactionType;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +31,7 @@ export class TransactionService {
       .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
   }
 
-  update(id: string, transaction: TransactionDTO): Observable<Transaction> {
+  update(id: number, transaction: TransactionDTO): Observable<Transaction> {
     return this.httpClient
       .put<TransfersResponsePayload>(
         `${this.transactionBaseUrl}/${id}`,
@@ -61,7 +57,7 @@ export class TransactionService {
       amount: transaction.amount,
       type: transaction.type === TransactionType.INCOME ? 'RECEITA' : 'DESPESA',
       date: transaction.date.toISOString(),
-      categoryId: transaction.category,
+      categoryId: Number(transaction.category),
     };
   }
 

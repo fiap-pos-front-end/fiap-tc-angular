@@ -1,12 +1,18 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
-import { CategoryDTO, emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import {
+  CategoryDTO,
+  emitEvent,
+  EVENTS,
+  Transaction,
+  TransactionDTO,
+  TransactionType,
+} from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
   DialogUploaderComponent,
   TransactionsListHeaderToolbarComponent,
 } from '@fiap-tc-angular/components';
-import { CreateTransactionDTO } from '@fiap-tc-angular/core/application';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -146,11 +152,11 @@ export class TransactionsListComponent implements OnInit {
     this.dialogState.set({ visible: true, isEditing: true });
   }
 
-  saveTransaction(transactionData: { id: string } & CreateTransactionDTO) {
-    const dto: CreateTransactionDTO = { ...transactionData, amount: transactionData.amount };
+  saveTransaction(transactionData: TransactionDTO) {
+    const dto: TransactionDTO = { ...transactionData, category: transactionData.category.toString() };
 
     const operation = transactionData.id
-      ? this.transactionService.update(transactionData.id, dto)
+      ? this.transactionService.update(Number(transactionData.id), dto)
       : this.transactionService.create(dto);
 
     operation.subscribe({
