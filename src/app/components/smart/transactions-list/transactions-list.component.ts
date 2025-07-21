@@ -9,7 +9,6 @@ import {
 import { CreateTransactionDTO } from '@fiap-tc-angular/core/application';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
@@ -35,7 +34,6 @@ interface UploaderDialogState {
     DialogTransactionFormComponent,
     TransactionsListHeaderToolbarComponent,
     DialogUploaderComponent,
-    ConfirmDialogModule,
     ...PRIMENG_MODULES,
   ],
   providers: [MessageService, ConfirmationService, AsyncPipe],
