@@ -1,8 +1,8 @@
 import { Component, input, output } from '@angular/core';
+import { UploaderComponent } from '@fiap-tc-angular/components';
 import { Button } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
-import { UploaderComponent } from '../../uploader/uploader.component';
 
 @Component({
   selector: 'app-dialog-uploader',
