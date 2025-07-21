@@ -1,4 +1,4 @@
-import { TransactionType } from '../domain';
+import { TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 
 export * from './tokens';
 

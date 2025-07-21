@@ -6,6 +6,7 @@ import {
   DialogUploaderComponent,
   TransactionsListHeaderToolbarComponent,
 } from '@fiap-tc-angular/components';
+import { CreateTransactionDTO } from '@fiap-tc-angular/core/application';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -25,13 +26,6 @@ interface TransactionDialogState {
 
 interface UploaderDialogState {
   visible: boolean;
-}
-
-export interface CreateTransactionDTO {
-  type: TransactionType;
-  amount: number;
-  category: number;
-  date: Date;
 }
 
 @Component({
