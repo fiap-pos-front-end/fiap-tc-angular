@@ -6,10 +6,11 @@
   [modal]="true"
 >
   <ng-template pTemplate="content">
-    <app-uploader></app-uploader>
+    <app-uploader (returnFiles)="storeFiles($event)"></app-uploader>
   </ng-template>
 
   <ng-template pTemplate="footer">
     <p-button label="Cancelar" icon="pi pi-times" text (click)="onHide.emit()" />
+    <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
   </ng-template>
 </p-dialog>

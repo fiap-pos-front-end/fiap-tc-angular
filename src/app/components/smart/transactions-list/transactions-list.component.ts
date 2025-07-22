@@ -202,9 +202,11 @@ export class TransactionsListComponent implements OnInit {
 
   openUploadTransaction(transaction: Transaction) {
     this.dialogUploaderState.set({ visible: true });
+    this.currentTransaction.set(transaction);
   }
 
   hideUploadDialog() {
     this.dialogUploaderState.set({ visible: false });
+    this.currentTransaction.set(undefined);
   }
 }

@@ -1,37 +1,35 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { Component, Input} from '@angular/core';
+import { Component, Output, Input, EventEmitter } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-
 interface ArchiveItem {
   source: SafeHtml;
-  ctdocume: string;
   name: string;
   type: string;
   tpdocume: number;
+  original: FileList;
 }
 
 @Component({
   selector: 'app-uploader',
   imports: [CommonModule, DialogModule],
   templateUrl: './uploader.component.html',
-  styleUrl: './uploader.component.scss'
+  styleUrl: './uploader.component.scss',
 })
 export class UploaderComponent {
   typeAccepted = ['application/pdf', 'image/jpeg', 'image/png'];
   arrObjArchive: ArchiveItem[] = [];
-  maxItems : number = 3;
+  maxItems: number = 3;
   imageVisible = false;
   selectedImage: SafeHtml | null = null;
 
-  @Input() context : any;
+  @Input() searchImages = [];
+  @Output() returnFiles = new EventEmitter();
 
-  constructor(
-    private sanitizer: DomSanitizer
-  ) { }
+  constructor(private sanitizer: DomSanitizer) {}
 
   async onSelectFile(data: FileList | any) {
-    let dados = (data.target?.files) ? data.target.files : (data.length > 0) ? (data) : null;
+    let dados = data.target?.files ? data.target.files : data.length > 0 ? data : null;
     let arrArchivesError = [];
     let cont = 0;
 
@@ -40,18 +38,18 @@ export class UploaderComponent {
         let nameArchive = file.name;
         try {
           const result = await this.readFileAsDataURL(file);
-          if(!this.typeAccepted.find(f => file.type.includes(f.substring(1)))){
+          if (!this.typeAccepted.find((f) => file.type.includes(f.substring(1)))) {
             arrArchivesError.push(file.name);
-          }else if (this.arrObjArchive.find(i => i.source === result)) {
+          } else if (this.arrObjArchive.find((i) => i.source === result)) {
             console.log(`Arquivo ${nameArchive} já inserido`, 'ERRO:');
           } else {
-            let bufferLimpo = (result) ? result.split("base64,") : '';
             this.arrObjArchive.push({
-               source: (this.formatTypes(file.type).string == 'pdf' ) ? this.getSafeHtml(result) : result, 
-               ctdocume: bufferLimpo[1], 
-               name: file.name, 
-               type: file.type,
-               tpdocume: this.formatTypes(file.type).id_type});
+              source: this.formatTypes(file.type).string == 'pdf' ? this.getSafeHtml(result) : result,
+              name: file.name,
+              type: file.type,
+              tpdocume: this.formatTypes(file.type).id_type,
+              original: file,
+            });
           }
           cont++;
         } catch (error) {
@@ -59,10 +57,10 @@ export class UploaderComponent {
         }
       }
 
-      if(arrArchivesError.length == 1){
+      if (arrArchivesError.length == 1) {
         console.log(`O arquivo ${arrArchivesError[0]} possui um tipo não permitido`, 'ERRO:');
       }
-
+      this.returnFiles.emit(this.arrObjArchive);
     }
   }
 
@@ -95,17 +93,18 @@ export class UploaderComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(html);
   }
 
-  removeImg(index: number){
-    this.arrObjArchive.splice(index,1);
+  removeImg(index: number) {
+    this.arrObjArchive.splice(index, 1);
+    this.returnFiles.emit(this.arrObjArchive);
   }
 
-  formatTypes(type: string){
-    if(['png','jpg','jpeg'].includes(type.split('/')[1])){
-      return {string:'imagem', id_type:1}
-    }else if(['pdf'].includes(type.split('/')[1])){
-      return {string:'pdf', id_type:2}
-    }else{
-      return {string:'Não Identificado', id_type:0}
+  formatTypes(type: string) {
+    if (['png', 'jpg', 'jpeg'].includes(type.split('/')[1])) {
+      return { string: 'imagem', id_type: 1 };
+    } else if (['pdf'].includes(type.split('/')[1])) {
+      return { string: 'pdf', id_type: 2 };
+    } else {
+      return { string: 'Não Identificado', id_type: 0 };
     }
   }
 
