@@ -67,7 +67,7 @@ export class DialogTransactionFormComponent {
 
   readonly transactionForm: FormGroup = new FormGroup({
     id: new FormControl(''),
-    amount: new FormControl(0, [Validators.required, Validators.min(0.01)]),
+    amount: new FormControl(null, [Validators.required, Validators.min(0.01)]),
     date: new FormControl(new Date(), [Validators.required]),
     category: new FormControl('', [Validators.required]),
     type: new FormControl(TransactionType.INCOME, [Validators.required]),
@@ -80,6 +80,17 @@ export class DialogTransactionFormComponent {
     });
   }
 
+  private resetForm() {
+    this.transactionForm.reset();
+    this.transactionForm.patchValue({ amount: null, date: new Date() });
+    this.formSubmitted.set(false);
+  }
+
+  hideDialog() {
+    this.resetForm();
+    this.onHide.emit();
+  }
+
   saveTransaction() {
     this.formSubmitted.set(true);
 
@@ -88,8 +99,6 @@ export class DialogTransactionFormComponent {
     }
 
     this.onSave.emit(this.transactionForm.value);
-    this.transactionForm.reset();
-    this.transactionForm.patchValue({ amount: 0, date: new Date() });
-    this.formSubmitted.set(false);
+    this.resetForm();
   }
 }
