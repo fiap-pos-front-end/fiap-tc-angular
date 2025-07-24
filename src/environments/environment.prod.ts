@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://need-to-be-updated', // TODO: atualizar assim que fizermos o deploy na cloud
+  apiUrl: 'https://fiap-tc-api-production.up.railway.app',
 };
