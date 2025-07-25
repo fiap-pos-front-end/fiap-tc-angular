@@ -70,7 +70,7 @@ src/
 - **Componentes de Apresentação**: Adicione em `src/app/components/presentational/` se o componente for puramente visual e reutilizável
 - **Componentes Inteligentes**: Adicione em `src/app/components/smart/` se o componente contiver lógica de negócio ou regras de UI
 - **Páginas**: Adicione em `src/app/pages/` se for uma nova rota/página
-- **Regras "code" ou relativas ao domínio**: Adicione em `src/app/core/domain/` para novas regras de negócio
+- **Regras "core" ou relativas ao domínio**: Adicione em `src/app/core/domain/` para novas regras de negócio
 - **Serviços**: Adicione em `src/app/infrastructure/services/` para novos serviços de infraestrutura
 
 ## 📝 Extra
