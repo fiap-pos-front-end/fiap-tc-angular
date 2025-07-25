@@ -1,7 +1,8 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { Component, Output, Input, EventEmitter } from '@angular/core';
+import { Component, Output, Input, EventEmitter, OnInit, inject } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
+import { UploaderService } from '@fiap-tc-angular/infrastructure';
 interface ArchiveItem {
   source: SafeHtml;
   name: string;
@@ -16,7 +17,10 @@ interface ArchiveItem {
   templateUrl: './uploader.component.html',
   styleUrl: './uploader.component.scss',
 })
-export class UploaderComponent {
+export class UploaderComponent implements OnInit {
+  private readonly uploaderService = inject(UploaderService);
+  private readonly sanitizer = inject(DomSanitizer);
+
   typeAccepted = ['application/pdf', 'image/jpeg', 'image/png'];
   arrObjArchive: ArchiveItem[] = [];
   maxItems: number = 3;
@@ -26,7 +30,9 @@ export class UploaderComponent {
   @Input() searchImages = [];
   @Output() returnFiles = new EventEmitter();
 
-  constructor(private sanitizer: DomSanitizer) {}
+  ngOnInit(): void {
+    this.getFiles();
+  }
 
   async onSelectFile(data: FileList | any) {
     let dados = data.target?.files ? data.target.files : data.length > 0 ? data : null;
@@ -60,7 +66,7 @@ export class UploaderComponent {
       if (arrArchivesError.length == 1) {
         console.log(`O arquivo ${arrArchivesError[0]} possui um tipo não permitido`, 'ERRO:');
       }
-      this.returnFiles.emit(this.arrObjArchive);
+      this.returnFiles.emit(this.arrObjArchive.map((arquivo) => arquivo.original));
     }
   }
 
@@ -106,5 +112,16 @@ export class UploaderComponent {
     } else {
       return { string: 'Não Identificado', id_type: 0 };
     }
+  }
+
+  getFiles() {
+    this.uploaderService.getFiles('2').subscribe({
+      next: (res) => {
+        console.log('Arquivo recebido:', res);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar arquivo:', err);
+      },
+    });
   }
 }

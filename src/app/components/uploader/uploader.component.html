@@ -14,7 +14,7 @@
             @if (archive.tpdocume == 2) {
               <iframe [src]="archive.source" width="170px" height="220px" frameborder="0"> </iframe>
             } @else {
-              <img [src]="archive.source" id="img-view" alt="Anexo" (click)="zoomImage(archive.source)" />
+              <img [src]="archive.source" id="img-view" alt="Anexo" />
             }
 
             <div class="close-img" (click)="removeImg(j)" [ngStyle]="{ top: archive.tpdocume == 2 ? '108px' : '60px' }">
