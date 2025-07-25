@@ -1,10 +1,10 @@
 # FIAP Tech Challenge - Microfrontend de Transferências
 
-## Introdução
+**Este projeto é um microfrontend desenvolvido em Angular v19, responsável pelo domínio de Transações do FIAP Tech Challenge 2. Ele faz parte de uma arquitetura de microfrontends, focando especificamente na gestão e visualização de transações financeiras.**
 
-Este projeto é um microfrontend desenvolvido em Angular v19, responsável pelo domínio de Transações do FIAP Tech Challenge 2. Ele faz parte de uma arquitetura de microfrontends, focando especificamente na gestão e visualização de transações financeiras.
+---
 
-## Primeiros passos
+## 🚀 Primeiros passos
 
 ### Pré-requisitos
 
@@ -45,7 +45,7 @@ O aplicativo estará disponível em `http://localhost:4200`.
 > [!WARNING]
 > Vale ressaltar que a ideia e foco desse Microfrontend é ser utilizado em conjunto com os demais + shell. Para mais detalhes, leia a [seção de introdução do projeto aqui](https://github.com/fiap-pos-front-end).
 
-## Estrutura do Projeto
+## 🧱 Estrutura do Projeto
 
 ```
 src/
@@ -73,7 +73,7 @@ src/
 - **Regras "code" ou relativas ao domínio**: Adicione em `src/app/core/domain/` para novas regras de negócio
 - **Serviços**: Adicione em `src/app/infrastructure/services/` para novos serviços de infraestrutura
 
-## Extra
+## 📝 Extra
 
 ### Comandos Úteis
 
