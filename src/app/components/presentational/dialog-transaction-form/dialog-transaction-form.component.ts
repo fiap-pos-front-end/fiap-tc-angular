@@ -1,6 +1,7 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CategoryDTO, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Category, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import { CategoryService } from '@fiap-tc-angular/infrastructure';
 import { Button } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
@@ -31,25 +32,28 @@ type TransactionTypeSelectOption = {
   ],
   templateUrl: './dialog-transaction-form.component.html',
 })
-export class DialogTransactionFormComponent {
-  readonly categories = input.required<CategoryDTO[]>();
+export class DialogTransactionFormComponent implements OnInit {
+  private readonly categoryService = inject(CategoryService);
   readonly isEditing = input<boolean>(false);
   readonly isVisible = input.required<boolean>();
   readonly transactionToBeUpdated = input<Transaction | undefined>(undefined);
   readonly onHide = output<void>();
   readonly onSave = output<Transaction>();
+  readonly categories = signal<Category[]>([]);
+  effect = effect(() => {
+    if (this.transactionToBeUpdated()) {
+      this.transactionForm.patchValue({
+        ...this.transactionToBeUpdated()!,
+        amount: this.transactionToBeUpdated()!.amount,
+      });
 
-  constructor() {
-    effect(() => {
-      if (this.transactionToBeUpdated()) {
-        this.transactionForm.patchValue({
-          ...this.transactionToBeUpdated()!,
-          amount: this.transactionToBeUpdated()!.amount.value,
-          category: this.categories().find((c) => c.id.toString() === this.transactionToBeUpdated()!.categoryId)?.id,
-        });
+      this.transactionForm.updateValueAndValidity();
+    }
+  });
 
-        this.transactionForm.updateValueAndValidity();
-      }
+  ngOnInit(): void {
+    this.categoryService.getAll().subscribe((res) => {
+      this.categories.set(res);
     });
   }
 
@@ -69,8 +73,8 @@ export class DialogTransactionFormComponent {
     id: new FormControl(''),
     amount: new FormControl(null, [Validators.required, Validators.min(0.01)]),
     date: new FormControl(new Date(), [Validators.required]),
-    category: new FormControl('', [Validators.required]),
-    type: new FormControl(TransactionType.INCOME, [Validators.required]),
+    categoryId: new FormControl('', [Validators.required]),
+    type: new FormControl(TransactionType.RECEITA, [Validators.required]),
   });
 
   private createControlValidation(controlName: string) {

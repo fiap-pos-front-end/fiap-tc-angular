@@ -46,11 +46,11 @@ export class StatementComponent implements OnInit {
 
   private calculateBalance(transactions: Transaction[]): number {
     return transactions.reduce((acc, transaction) => {
-      if (transaction.type === TransactionType.INCOME) {
-        return acc + transaction.amount.value;
+      if (transaction.type === TransactionType.RECEITA) {
+        return acc + transaction.amount;
       }
 
-      return acc - transaction.amount.value;
+      return acc - transaction.amount;
     }, 0);
   }
 

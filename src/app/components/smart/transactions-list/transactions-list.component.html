@@ -52,8 +52,8 @@
       <tr>
         <td><p-tableCheckbox [value]="transaction" /></td>
         <td><p-tag [value]="transaction.type" [severity]="getTransactionTypeColor(transaction.type)" /></td>
-        <td>{{ transaction.amount.value | currency: 'BRL' }}</td>
-        <td>{{ transaction.category | titlecase }}</td>
+        <td>{{ transaction.amount | currency: 'BRL' }}</td>
+        <td>{{ transaction.category.name | titlecase }}</td>
         <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
         <td class="flex pr-4 justify-content-end">
           <p-button icon="pi pi-pencil" class="mr-2" rounded outlined (click)="editTransaction(transaction)" />
@@ -72,7 +72,6 @@
   </p-table>
 
   <app-dialog-transaction-form
-    [categories]="categories()"
     [isVisible]="dialogState().visible"
     [isEditing]="dialogState().isEditing"
     [transactionToBeUpdated]="currentTransaction()"

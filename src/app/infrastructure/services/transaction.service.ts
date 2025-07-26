@@ -1,12 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  Transaction,
-  TransactionDTO,
-  TransactionType,
-  TransfersResponsePayload,
-} from '@fiap-pos-front-end/fiap-tc-shared';
-import { map, Observable } from 'rxjs';
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -15,59 +10,29 @@ import { environment } from '../../../environments/environment';
 export class TransactionService {
   private readonly httpClient = inject(HttpClient);
 
-  private readonly transactionBaseUrl = `${environment.apiUrl}/transfers`;
+  private readonly transactionBaseUrl = `${environment.apiUrl}/transactions`;
 
   getAll(): Observable<Transaction[]> {
-    return this.httpClient
-      .get<TransfersResponsePayload[]>(this.transactionBaseUrl)
-      .pipe(
-        map((transactions) => transactions.map((transaction) => this.mapTransactionPayloadToTransaction(transaction))),
-      );
+    return this.httpClient.get<Transaction[]>(this.transactionBaseUrl);
   }
 
-  create(transaction: TransactionDTO): Observable<Transaction> {
-    return this.httpClient
-      .post<TransfersResponsePayload>(this.transactionBaseUrl, this.buildTransactionPayloadFromDTO(transaction))
-      .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
+  create(transaction: Transaction): Observable<Transaction> {
+    return this.httpClient.post<Transaction>(this.transactionBaseUrl, transaction);
   }
 
-  update(id: number, transaction: TransactionDTO): Observable<Transaction> {
-    return this.httpClient
-      .put<TransfersResponsePayload>(
-        `${this.transactionBaseUrl}/${id}`,
-        this.buildTransactionPayloadFromDTO(transaction),
-      )
-      .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
+  update(id: number, transaction: Transaction): Observable<Transaction> {
+    return this.httpClient.put<Transaction>(`${this.transactionBaseUrl}/${id}`, transaction);
   }
 
-  delete(id: string): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.transactionBaseUrl}/${id}`);
   }
 
-  getById(id: string): Observable<Transaction> {
+  getById(id: number): Observable<Transaction> {
     throw new Error('Method not implemented.');
   }
 
   getByDateRange(startDate: Date, endDate: Date): Observable<Transaction[]> {
     throw new Error('Method not implemented.');
-  }
-
-  private buildTransactionPayloadFromDTO(transaction: TransactionDTO): TransfersResponsePayload {
-    return {
-      amount: transaction.amount,
-      type: transaction.type === TransactionType.INCOME ? 'RECEITA' : 'DESPESA',
-      date: transaction.date.toISOString(),
-      categoryId: Number(transaction.category),
-    };
-  }
-
-  private mapTransactionPayloadToTransaction(transaction: TransfersResponsePayload): Transaction {
-    return Transaction.create(
-      transaction.id?.toString() || '',
-      transaction.type === 'RECEITA' ? TransactionType.INCOME : TransactionType.EXPENSE,
-      transaction.amount,
-      new Date(transaction.date),
-      transaction.categoryId.toString(),
-    );
   }
 }

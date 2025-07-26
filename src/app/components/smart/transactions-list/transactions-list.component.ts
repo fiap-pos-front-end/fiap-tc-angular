@@ -1,13 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
-import {
-  CategoryDTO,
-  emitEvent,
-  EVENTS,
-  Transaction,
-  TransactionDTO,
-  TransactionType,
-} from '@fiap-pos-front-end/fiap-tc-shared';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
   DialogUploaderComponent,
@@ -50,8 +43,6 @@ export class TransactionsListComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transactionService = inject(TransactionService);
 
-  readonly categories = input.required<CategoryDTO[]>();
-
   @ViewChild('dt') dt!: Table;
 
   readonly cols = signal<Column[]>([]);
@@ -69,7 +60,7 @@ export class TransactionsListComponent implements OnInit {
   private initializeColumns(): void {
     this.cols.set([
       { field: 'type', header: 'Tipo' },
-      { field: 'amount.value', header: 'Valor' },
+      { field: 'amount', header: 'Valor' },
       { field: 'category', header: 'Categoria' },
       { field: 'date', header: 'Data' },
     ]);
@@ -78,7 +69,7 @@ export class TransactionsListComponent implements OnInit {
   private loadTransactions(): void {
     this.transactionService.getAll().subscribe({
       next: (list) => {
-        this.transactions.set(list.map((t) => Transaction.appendCategory(t, t.categoryId, this.categories())));
+        this.transactions.set(list);
         emitEvent(EVENTS.TRANSACTIONS_UPDATED, this.transactions());
       },
       error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
@@ -140,8 +131,8 @@ export class TransactionsListComponent implements OnInit {
 
   getTransactionTypeColor(type: TransactionType): string {
     const colors = {
-      [TransactionType.INCOME]: 'success',
-      [TransactionType.EXPENSE]: 'danger',
+      [TransactionType.RECEITA]: 'success',
+      [TransactionType.DESPESA]: 'danger',
     };
 
     return colors[type] || 'info';
@@ -152,18 +143,16 @@ export class TransactionsListComponent implements OnInit {
     this.dialogState.set({ visible: true, isEditing: true });
   }
 
-  saveTransaction(transactionData: TransactionDTO) {
-    const dto: TransactionDTO = { ...transactionData, category: transactionData.category.toString() };
-
-    const operation = transactionData.id
-      ? this.transactionService.update(Number(transactionData.id), dto)
-      : this.transactionService.create(dto);
+  saveTransaction(transaction: Transaction) {
+    const operation = transaction.id
+      ? this.transactionService.update(Number(transaction.id), transaction)
+      : this.transactionService.create(transaction);
 
     operation.subscribe({
       next: () => {
         this.loadTransactions();
         this.hideTransactionDialog();
-        this.showSuccessMessage(`Transação ${transactionData.id ? 'atualizada' : 'criada'} com sucesso`);
+        this.showSuccessMessage(`Transação ${transaction.id ? 'atualizada' : 'criada'} com sucesso`);
         this.currentTransaction.set(undefined);
       },
       error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
