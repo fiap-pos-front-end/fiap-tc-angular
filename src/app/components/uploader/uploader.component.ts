@@ -115,7 +115,7 @@ export class UploaderComponent implements OnInit {
   }
 
   getFiles() {
-    this.uploaderService.getFiles('2').subscribe({
+    this.uploaderService.getFiles(1).subscribe({
       next: (res) => {
         console.log('Arquivo recebido:', res);
       },

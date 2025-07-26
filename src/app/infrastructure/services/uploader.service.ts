@@ -24,27 +24,14 @@ export class UploaderService {
       )
       .pipe(map((transaction) => this.mapTransactionPayloadToTransaction(transaction)));
   }
+  uploadAttachments(id: number, files: File[]): Observable<any> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
 
-  //   update(id: number, transaction: any): Observable<Transaction> {
-  //   const formData = new FormData();
+    return this.httpClient.put(`${this.transactionBaseUrl}/${id}/attachments`, formData);
+  }
 
-  //   formData.append('amount', transaction.amount.toString());
-  //   formData.append('type', transaction.type === TransactionType.INCOME ? 'RECEITA' : 'DESPESA');
-  //   formData.append('date', transaction.date.toISOString());
-  //   formData.append('categoryId', transaction.category.toString());
-
-  //   if (transaction.files && transaction.files.length > 0) {
-  //     transaction.files.forEach((file: File) => {
-  //       formData.append('files', file);
-  //     });
-  //   }
-
-  //   return this.httpClient
-  //     .put<TransfersResponsePayload>(`${this.transactionBaseUrl}/${id}`, formData, {})
-  //     .pipe(map((response) => this.mapTransactionPayloadToTransaction(response)));
-  // }
-
-  getFiles(id: string) {
+  getFiles(id: number) {
     return this.httpClient.get(`${this.transactionBaseUrl}/${id}/attachments`);
   }
 
@@ -54,7 +41,7 @@ export class UploaderService {
       type: transaction.type === TransactionType.INCOME ? 'RECEITA' : 'DESPESA',
       date: transaction.date.toISOString(),
       categoryId: Number(transaction.category),
-      files: transaction.files,
+      attachments: transaction.files,
     };
   }
 
