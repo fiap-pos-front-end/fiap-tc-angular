@@ -80,7 +80,12 @@
     (onSave)="saveTransaction($any($event))"
   />
 
-  <app-dialog-uploader [isVisible]="dialogUploaderState().visible" (onHide)="hideUploadDialog()" />
+  <app-dialog-uploader
+    [isVisible]="dialogUploaderState().visible"
+    [transaction]="currentTransaction()"
+    (onHide)="hideUploadDialog()"
+    (onSave)="saveUpload()"
+  />
 
   <p-confirmDialog [style]="{ width: '450px' }" />
 </div>
