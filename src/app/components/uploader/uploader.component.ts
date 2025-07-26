@@ -137,8 +137,7 @@ export class UploaderComponent implements OnInit {
   }
 
   getFiles() {
-    const id = parseInt(this.transaction!.id);
-    this.uploaderService.getFiles(id).subscribe({
+    this.uploaderService.getFiles(this.transaction!.id).subscribe({
       next: (res) => {
         console.log('Arquivo recebido:', res);
         let arquivos = res;

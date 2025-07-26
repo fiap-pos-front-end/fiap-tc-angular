@@ -27,8 +27,7 @@ export class DialogUploaderComponent {
       this.onHide.emit();
     } else {
       this.loading = true;
-      const id = parseInt(this.transaction()!.id);
-      this.uploaderService.uploadAttachments(id, this.archives).subscribe({
+      this.uploaderService.uploadAttachments(this.transaction()!.id, this.archives).subscribe({
         next: () => {
           this.onSave.emit(true);
           this.loading = false;
