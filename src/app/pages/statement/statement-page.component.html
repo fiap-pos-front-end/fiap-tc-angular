@@ -10,7 +10,7 @@
         >
           <p-tag
             [value]="item.type"
-            [severity]="item.type === TransactionType.INCOME ? 'success' : 'danger'"
+            [severity]="item.type === TransactionType.RECEITA ? 'success' : 'danger'"
             [style]="{ 'min-width': '76px' }"
           ></p-tag>
 
@@ -23,7 +23,7 @@
         </div>
 
         <span class="flex-none font-bold text-md">
-          {{ item.amount.value | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          {{ item.amount | currency: 'BRL' : 'symbol' : '1.2-2' }}
         </span>
       </div>
     }

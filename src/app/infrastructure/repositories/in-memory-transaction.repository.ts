@@ -6,9 +6,36 @@ import { Observable, of } from 'rxjs';
 @Injectable()
 export class InMemoryTransactionRepository implements ITransactionRepository {
   transactions: Transaction[] = [
-    Transaction.create('f8a60281-38bc-4785-be92-b3a60c59f533', TransactionType.INCOME, 100, new Date(), 'Salário'),
-    Transaction.create('f19ff5af-20be-4e73-a4e2-9c19f1899444', TransactionType.EXPENSE, 200, new Date(), 'alimentação'),
-    Transaction.create('0a30d0b1-e0b2-49c3-a25e-d5467adead64', TransactionType.INCOME, 300, new Date(), 'Proventos'),
+    {
+      id: 1,
+      type: TransactionType.RECEITA,
+      amount: 100,
+      date: new Date(),
+      categoryId: 1,
+      attachments: '',
+      category: { id: 1, name: 'Salário', userId: 1 },
+      userId: 1,
+    },
+    {
+      id: 2,
+      type: TransactionType.DESPESA,
+      amount: 200,
+      date: new Date(),
+      categoryId: 1,
+      attachments: '',
+      category: { id: 2, name: 'alimentação', userId: 1 },
+      userId: 1,
+    },
+    {
+      id: 3,
+      type: TransactionType.RECEITA,
+      amount: 300,
+      date: new Date(),
+      categoryId: 1,
+      attachments: '',
+      category: { id: 3, name: 'Proventos', userId: 1 },
+      userId: 1,
+    },
   ];
 
   create(transaction: Transaction): Observable<Transaction> {
@@ -27,7 +54,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
     return of(transaction);
   }
 
-  delete(id: string): Observable<void> {
+  delete(id: number): Observable<void> {
     const index = this.transactions.findIndex((t) => t.id === id);
 
     if (index === -1) {
@@ -38,7 +65,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
     return of(void 0);
   }
 
-  getById(id: string): Observable<Transaction> {
+  getById(id: number): Observable<Transaction> {
     const transaction = this.transactions.find((t) => t.id === id);
 
     if (!transaction) {
