@@ -5,12 +5,11 @@ import { Dialog } from 'primeng/dialog';
 import { UploaderComponent } from '../../uploader/uploader.component';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
 import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
-import { Message } from 'primeng/message';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-dialog-uploader',
-  imports: [Dialog, Button, ConfirmDialogModule, UploaderComponent, Message, ProgressSpinnerModule],
+  imports: [Dialog, Button, ConfirmDialogModule, UploaderComponent, ProgressSpinnerModule],
   templateUrl: './dialog-uploader.component.html',
 })
 export class DialogUploaderComponent {
