@@ -209,4 +209,9 @@ export class TransactionsListComponent implements OnInit {
     this.dialogUploaderState.set({ visible: false });
     this.currentTransaction.set(undefined);
   }
+
+  saveUpload() {
+    this.hideUploadDialog();
+    this.showSuccessMessage('Upload realizado com sucesso');
+  }
 }

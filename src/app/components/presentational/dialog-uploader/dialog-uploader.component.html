@@ -6,7 +6,13 @@
   [modal]="true"
 >
   <ng-template pTemplate="content">
-    <app-uploader (returnFiles)="storeFiles($event)"></app-uploader>
+    @if (!loading) {
+      <app-uploader (returnFiles)="storeFiles($event)" [transaction]="transaction()"></app-uploader>
+    } @else {
+      <div class="w-full h-full flex items-center justify-center">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+    }
   </ng-template>
 
   <ng-template pTemplate="footer">

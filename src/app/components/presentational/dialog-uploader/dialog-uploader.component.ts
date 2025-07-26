@@ -4,31 +4,38 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { UploaderComponent } from '../../uploader/uploader.component';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
-import { Transaction, TransactionDTO } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Message } from 'primeng/message';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-dialog-uploader',
-  imports: [Dialog, Button, ConfirmDialogModule, UploaderComponent],
+  imports: [Dialog, Button, ConfirmDialogModule, UploaderComponent, Message, ProgressSpinnerModule],
   templateUrl: './dialog-uploader.component.html',
 })
 export class DialogUploaderComponent {
   readonly isVisible = input.required<boolean>();
-  readonly transaction = input<{}>();
+  readonly transaction = input<Transaction | undefined>(undefined);
   readonly onHide = output<void>();
+  readonly onSave = output<boolean>();
   private readonly uploaderService = inject(UploaderService);
 
   archives: File[] = [];
+  loading: boolean = false;
 
   async saveTransaction() {
     if (this.archives.length == 0) {
       this.onHide.emit();
     } else {
-      this.uploaderService.uploadAttachments(1, this.archives).subscribe({
-        next: (res) => {
-          console.log('🚀 ~ DialogUploaderComponent ~ saveTransaction ~ res:', res);
+      this.loading = true;
+      const id = parseInt(this.transaction()!.id);
+      this.uploaderService.uploadAttachments(id, this.archives).subscribe({
+        next: () => {
+          this.onSave.emit(true);
+          this.loading = false;
         },
         error: (error) => {
-          console.log('🚀 ~ DialogUploaderComponent ~ saveTransaction ~ error:', error);
+          console.log(error);
         },
       });
     }

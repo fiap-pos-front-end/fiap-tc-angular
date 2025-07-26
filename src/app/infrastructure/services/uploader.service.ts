@@ -1,14 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {
-  Transaction,
-  TransactionDTO,
-  TransactionType,
-  TransfersResponsePayload,
-} from '@fiap-pos-front-end/fiap-tc-shared';
-
+export interface Arquivo {
+  contentType: string;
+  data: string;
+  filename: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +21,7 @@ export class UploaderService {
     return this.httpClient.put(`${this.transactionBaseUrl}/${id}/attachments`, formData);
   }
 
-  getFiles(id: number) {
-    return this.httpClient.get(`${this.transactionBaseUrl}/${id}/attachments`);
+  getFiles(id: number): Observable<Arquivo[]> {
+    return this.httpClient.get<Arquivo[]>(`${this.transactionBaseUrl}/${id}/attachments`);
   }
 }
