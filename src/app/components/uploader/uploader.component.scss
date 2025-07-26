@@ -60,6 +60,7 @@
 .content-preview {
   display: flex;
   align-items: center;
+  width: 100%;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -111,7 +112,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  left: -10px;
+  left: -15px;
   cursor: pointer;
 }
 
@@ -123,6 +124,31 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+.expanded-file {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--p-zinc-500);
+  z-index: 1000;
+}
+
+.file-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#img-expanded {
+  width: 600px;
+  height: 600px;
+  cursor: pointer;
 }
 
 @keyframes appear {

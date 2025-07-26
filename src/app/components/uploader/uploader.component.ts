@@ -1,8 +1,10 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Component, Output, Input, EventEmitter, OnInit, inject } from '@angular/core';
-import { DialogModule } from 'primeng/dialog';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+
 interface ArchiveItem {
   source: SafeHtml;
   name: string;
@@ -13,7 +15,8 @@ interface ArchiveItem {
 
 @Component({
   selector: 'app-uploader',
-  imports: [CommonModule, DialogModule],
+  imports: [CommonModule, Toast],
+  providers: [MessageService, Toast],
   templateUrl: './uploader.component.html',
   styleUrl: './uploader.component.scss',
 })
@@ -26,6 +29,7 @@ export class UploaderComponent implements OnInit {
   maxItems: number = 3;
   imageVisible = false;
   selectedImage: SafeHtml | null = null;
+  private messageService = inject(MessageService);
 
   @Input() searchImages = [];
   @Output() returnFiles = new EventEmitter();
@@ -33,6 +37,7 @@ export class UploaderComponent implements OnInit {
   ngOnInit(): void {
     this.getFiles();
   }
+  @Input() context: any;
 
   async onSelectFile(data: FileList | any) {
     let dados = data.target?.files ? data.target.files : data.length > 0 ? data : null;
@@ -47,26 +52,41 @@ export class UploaderComponent implements OnInit {
           if (!this.typeAccepted.find((f) => file.type.includes(f.substring(1)))) {
             arrArchivesError.push(file.name);
           } else if (this.arrObjArchive.find((i) => i.source === result)) {
-            console.log(`Arquivo ${nameArchive} já inserido`, 'ERRO:');
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: `Arquivo ${nameArchive} já inserido!`,
+              life: 2500,
+            });
           } else {
+            let bufferLimpo = result ? result.split('base64,') : '';
             this.arrObjArchive.push({
               source: this.formatTypes(file.type).string == 'pdf' ? this.getSafeHtml(result) : result,
               name: file.name,
               type: file.type,
-              tpdocume: this.formatTypes(file.type).id_type,
               original: file,
+              tpdocume: this.formatTypes(file.type).id_type,
             });
           }
           cont++;
         } catch (error) {
-          console.error(`Erro ao ler o arquivo ${nameArchive}:`, error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: `Erro ao ler o arquivo ${nameArchive}`,
+            life: 2500,
+          });
         }
       }
 
       if (arrArchivesError.length == 1) {
-        console.log(`O arquivo ${arrArchivesError[0]} possui um tipo não permitido`, 'ERRO:');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: `O arquivo ${arrArchivesError[0]} possui um tipo não permitido`,
+          life: 2500,
+        });
       }
-      this.returnFiles.emit(this.arrObjArchive.map((arquivo) => arquivo.original));
     }
   }
 

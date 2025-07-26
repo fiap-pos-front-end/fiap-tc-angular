@@ -1,6 +1,6 @@
 <p-dialog
   [visible]="isVisible()"
-  (visibleChange)="onHide.emit()"
+  (visibleChange)="hideDialog()"
   [style]="{ width: '450px' }"
   [header]="dialogTitle()"
   [modal]="true"
@@ -60,7 +60,7 @@
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <p-button label="Cancelar" icon="pi pi-times" text (click)="onHide.emit()" />
+    <p-button label="Cancelar" icon="pi pi-times" text (click)="hideDialog()" />
     <p-button label="Salvar" icon="pi pi-check" (click)="saveTransaction()" />
   </ng-template>
 </p-dialog>
