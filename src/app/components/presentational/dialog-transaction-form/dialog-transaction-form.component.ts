@@ -40,9 +40,13 @@ export class DialogTransactionFormComponent implements OnInit {
   readonly onHide = output<void>();
   readonly onSave = output<Transaction>();
   readonly categories = signal<Category[]>([]);
+
   effect = effect(() => {
     if (this.transactionToBeUpdated()) {
-      this.transactionForm.patchValue(this.transactionToBeUpdated()!);
+      this.transactionForm.patchValue({
+        ...this.transactionToBeUpdated()!,
+        date: new Date(this.transactionToBeUpdated()!.date),
+      });
       this.transactionForm.updateValueAndValidity();
     }
   });
