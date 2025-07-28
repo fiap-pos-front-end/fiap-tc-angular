@@ -12,7 +12,7 @@ export interface Arquivo {
 })
 export class UploaderService {
   private readonly httpClient = inject(HttpClient);
-  private readonly transactionBaseUrl = `${environment.apiUrl}/transfers`;
+  private readonly transactionBaseUrl = `${environment.apiUrl}/transactions`;
 
   uploadAttachments(id: number, files: File[]): Observable<any> {
     const formData = new FormData();
