@@ -42,11 +42,7 @@ export class DialogTransactionFormComponent implements OnInit {
   readonly categories = signal<Category[]>([]);
   effect = effect(() => {
     if (this.transactionToBeUpdated()) {
-      this.transactionForm.patchValue({
-        ...this.transactionToBeUpdated()!,
-        amount: this.transactionToBeUpdated()!.amount,
-      });
-
+      this.transactionForm.patchValue(this.transactionToBeUpdated()!);
       this.transactionForm.updateValueAndValidity();
     }
   });
