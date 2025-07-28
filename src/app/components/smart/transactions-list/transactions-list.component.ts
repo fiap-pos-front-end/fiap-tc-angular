@@ -63,7 +63,7 @@ export class TransactionsListComponent implements OnInit {
     this.cols.set([
       { field: 'type', header: 'Tipo' },
       { field: 'amount', header: 'Valor' },
-      { field: 'category', header: 'Categoria' },
+      { field: 'category.name', header: 'Categoria' },
       { field: 'date', header: 'Data' },
     ]);
   }
@@ -131,6 +131,7 @@ export class TransactionsListComponent implements OnInit {
   }
 
   onExportCsvClicked() {
+    console.log('🚀 ~ TransactionsListComponent ~ onExportCsvClicked ~ this.dt:', this.dt);
     this.dt.exportCSV();
   }
 

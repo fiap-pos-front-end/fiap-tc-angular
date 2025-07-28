@@ -16,7 +16,7 @@
     [rows]="10"
     [columns]="cols()"
     [paginator]="true"
-    [globalFilterFields]="['type', 'amount', 'date', 'category']"
+    [globalFilterFields]="['type', 'amount', 'date', 'category.name']"
     [(selection)]="selectedTransactions"
     [rowHover]="true"
     dataKey="id"
