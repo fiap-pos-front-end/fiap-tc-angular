@@ -32,14 +32,9 @@ export class DialogUploaderComponent {
       this.uploaderService
         .uploadAttachments(this.transaction()!.id, this.archives)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.onSave.emit(true);
-            this.loading = false;
-          },
-          error: (error) => {
-            console.log(error);
-          },
+        .subscribe(() => {
+          this.onSave.emit(true);
+          this.loading = false;
         });
     }
   }
