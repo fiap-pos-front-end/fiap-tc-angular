@@ -1,10 +1,11 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { MessageService } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { Tag } from 'primeng/tag';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-statement',
@@ -13,6 +14,7 @@ import { Tag } from 'primeng/tag';
   templateUrl: './statement-page.component.html',
 })
 export class StatementComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(MessageService);
   private readonly transactionService = inject(TransactionService);
 
@@ -24,17 +26,20 @@ export class StatementComponent implements OnInit {
   }
 
   private loadTransactions() {
-    this.transactionService.getAll().subscribe({
-      next: (transactionsList) => {
-        const orderedTransactions = transactionsList.sort(
-          (a: Transaction, b: Transaction) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
+    this.transactionService
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (transactionsList) => {
+          const orderedTransactions = transactionsList.sort(
+            (a: Transaction, b: Transaction) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+          );
 
-        this.transactions.set(orderedTransactions);
-        this.onTransactionsUpdated(orderedTransactions);
-      },
-      error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
-    });
+          this.transactions.set(orderedTransactions);
+          this.onTransactionsUpdated(orderedTransactions);
+        },
+        error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
+      });
   }
 
   private onTransactionsUpdated(transactions: Transaction[]) {

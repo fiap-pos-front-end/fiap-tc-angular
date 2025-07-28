@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import { CategoryService } from '@fiap-tc-angular/infrastructure';
@@ -33,6 +34,7 @@ type TransactionTypeSelectOption = {
   templateUrl: './dialog-transaction-form.component.html',
 })
 export class DialogTransactionFormComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly categoryService = inject(CategoryService);
   readonly isEditing = input<boolean>(false);
   readonly isVisible = input.required<boolean>();
@@ -52,9 +54,12 @@ export class DialogTransactionFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.categoryService.getAll().subscribe((res) => {
-      this.categories.set(res);
-    });
+    this.categoryService
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => {
+        this.categories.set(res);
+      });
   }
 
   readonly formSubmitted = signal<boolean>(false);

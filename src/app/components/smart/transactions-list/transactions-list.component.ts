@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
@@ -11,6 +11,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface Column {
   field: string;
@@ -39,6 +40,7 @@ interface UploaderDialogState {
   templateUrl: './transactions-list.component.html',
 })
 export class TransactionsListComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transactionService = inject(TransactionService);
@@ -67,13 +69,16 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    this.transactionService.getAll().subscribe({
-      next: (list) => {
-        this.transactions.set(list);
-        emitEvent(EVENTS.TRANSACTIONS_UPDATED, this.transactions());
-      },
-      error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
-    });
+    this.transactionService
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (list) => {
+          this.transactions.set(list);
+          emitEvent(EVENTS.TRANSACTIONS_UPDATED, this.transactions());
+        },
+        error: (error) => this.showErrorMessage('Erro ao carregar transações', error.message),
+      });
   }
 
   private showErrorMessage(summary: string, detail: string): void {
@@ -148,7 +153,7 @@ export class TransactionsListComponent implements OnInit {
       ? this.transactionService.update(Number(transaction.id), transaction)
       : this.transactionService.create(transaction);
 
-    operation.subscribe({
+    operation.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.loadTransactions();
         this.hideTransactionDialog();
@@ -163,10 +168,13 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category}) do dia ${transaction.date.toLocaleDateString('pt-BR')}?`,
       () => {
-        this.transactionService.delete(transaction.id).subscribe({
-          next: () => this.loadTransactions(),
-          error: (error) => this.showErrorMessage('Erro ao deletar transação', error.message),
-        });
+        this.transactionService
+          .delete(transaction.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => this.loadTransactions(),
+            error: (error) => this.showErrorMessage('Erro ao deletar transação', error.message),
+          });
       },
     );
   }

@@ -1,11 +1,13 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { Component, Output, Input, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Output, Input, EventEmitter, OnInit, inject, DestroyRef } from '@angular/core';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ArchiveItem {
   source: SafeHtml;
@@ -23,6 +25,7 @@ interface ArchiveItem {
   styleUrl: './uploader.component.scss',
 })
 export class UploaderComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly uploaderService = inject(UploaderService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly messageService = inject(MessageService);
@@ -30,7 +33,7 @@ export class UploaderComponent implements OnInit {
   typeAccepted = ['application/pdf', 'image/jpeg', 'image/png'];
   arrObjArchive: ArchiveItem[] = [];
   maxItems: number = 3;
-  loading: boolean = true;
+  loading: boolean = false;
   selectedImage: SafeHtml | null = null;
 
   @Input() transaction?: Transaction;
@@ -137,9 +140,14 @@ export class UploaderComponent implements OnInit {
   }
 
   getFiles() {
-    this.uploaderService.getFiles(this.transaction!.id).subscribe({
-      next: (res) => {
-        console.log('Arquivo recebido:', res);
+    this.loading = true;
+    this.uploaderService
+      .getFiles(this.transaction!.id)
+      .pipe(
+        finalize(() => (this.loading = false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
         let arquivos = res;
         for (let file of arquivos) {
           if (file.data) {
@@ -155,12 +163,7 @@ export class UploaderComponent implements OnInit {
             });
           }
         }
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erro ao buscar arquivo:', err);
-      },
-    });
+      });
   }
 
   //Converte para FILE -> salvar na S3

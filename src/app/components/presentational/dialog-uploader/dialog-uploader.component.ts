@@ -1,4 +1,4 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, inject, DestroyRef } from '@angular/core';
 import { Button } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
@@ -6,6 +6,7 @@ import { UploaderComponent } from '../../uploader/uploader.component';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
 import { Transaction } from '@fiap-pos-front-end/fiap-tc-shared';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dialog-uploader',
@@ -13,6 +14,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   templateUrl: './dialog-uploader.component.html',
 })
 export class DialogUploaderComponent {
+  private readonly destroyRef = inject(DestroyRef);
   readonly isVisible = input.required<boolean>();
   readonly transaction = input<Transaction | undefined>(undefined);
   readonly onHide = output<void>();
@@ -27,15 +29,18 @@ export class DialogUploaderComponent {
       this.onHide.emit();
     } else {
       this.loading = true;
-      this.uploaderService.uploadAttachments(this.transaction()!.id, this.archives).subscribe({
-        next: () => {
-          this.onSave.emit(true);
-          this.loading = false;
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
+      this.uploaderService
+        .uploadAttachments(this.transaction()!.id, this.archives)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.onSave.emit(true);
+            this.loading = false;
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
     }
   }
 
