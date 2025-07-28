@@ -68,7 +68,7 @@ export class DialogTransactionFormComponent implements OnInit {
   readonly amountInvalid = this.createControlValidation('amount');
   readonly dateInvalid = this.createControlValidation('date');
   readonly typeInvalid = this.createControlValidation('type');
-  readonly categoryInvalid = this.createControlValidation('category');
+  readonly categoryInvalid = this.createControlValidation('categoryId');
   readonly transactionTypes: Array<TransactionTypeSelectOption> = Object.entries(TransactionType).map(([_, label]) => ({
     label,
     value: label,
