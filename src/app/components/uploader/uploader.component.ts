@@ -35,7 +35,6 @@ export class UploaderComponent implements OnInit {
   maxItems: number = 3;
   loading: boolean = false;
   selectedImage: SafeHtml | null = null;
-  usedGetFiles: boolean = false;
 
   @Input() transaction?: Transaction;
   @Output() returnFiles = new EventEmitter();
@@ -166,8 +165,7 @@ export class UploaderComponent implements OnInit {
           }
         }
 
-        this.usedGetFiles = arquivos.every((item) => Object.keys(item).length == 0) ? false : true;
-        this.downloaded.emit(this.usedGetFiles);
+        this.downloaded.emit(arquivos.every((item) => Object.keys(item).length == 0) ? false : true);
       });
   }
 
