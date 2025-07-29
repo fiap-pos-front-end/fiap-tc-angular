@@ -208,8 +208,10 @@ export class TransactionsListComponent implements OnInit {
     this.currentTransaction.set(undefined);
   }
 
-  saveUpload() {
+  saveUpload(showMessage: boolean) {
     this.hideUploadDialog();
-    this.showSuccessMessage('Upload realizado com sucesso');
+    if (showMessage) {
+      this.showSuccessMessage('Upload realizado com sucesso');
+    }
   }
 }

@@ -25,18 +25,14 @@ export class DialogUploaderComponent {
   loading: boolean = false;
 
   async saveTransaction() {
-    if (this.archives.length == 0) {
-      this.onHide.emit();
-    } else {
-      this.loading = true;
-      this.uploaderService
-        .uploadAttachments(this.transaction()!.id, this.archives)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          this.onSave.emit(true);
-          this.loading = false;
-        });
-    }
+    this.loading = true;
+    this.uploaderService
+      .uploadAttachments(this.transaction()!.id, this.archives)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.onSave.emit(this.archives.length > 0 ? true : false);
+        this.loading = false;
+      });
   }
 
   storeFiles(event: FileList) {
