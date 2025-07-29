@@ -7,7 +7,11 @@
 >
   <ng-template pTemplate="content">
     @if (!loading) {
-      <app-uploader (returnFiles)="storeFiles($event)" [transaction]="transaction()"></app-uploader>
+      <app-uploader
+        (returnFiles)="storeFiles($event)"
+        (downloaded)="filesFromS3($event)"
+        [transaction]="transaction()"
+      ></app-uploader>
     } @else {
       <div class="w-full h-full flex items-center justify-center">
         <p-progressSpinner></p-progressSpinner>

@@ -19,12 +19,19 @@
                 <img [src]="archive.source" id="img-view" alt="Anexo" />
               }
 
-              <div
-                class="close-img"
-                (click)="removeImg(j)"
-                [ngStyle]="{ top: archive.tpdocume == 2 ? '108px' : '78px' }"
-              >
-                <i class="pi pi-times"></i>
+              <div class="actions">
+                <div class="close-img" (click)="removeImg(j)">
+                  <i class="pi pi-times"></i>
+                </div>
+                @if (archive.original && usedGetFiles) {
+                  <div
+                    class="download-bt"
+                    (click)="downloadFile(archive.original)"
+                    [ngStyle]="{ top: archive.tpdocume == 2 ? '180px' : '115px' }"
+                  >
+                    <i class="pi pi-download"></i>
+                  </div>
+                }
               </div>
             </div>
 

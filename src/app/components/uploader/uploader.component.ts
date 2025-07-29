@@ -35,9 +35,11 @@ export class UploaderComponent implements OnInit {
   maxItems: number = 3;
   loading: boolean = false;
   selectedImage: SafeHtml | null = null;
+  usedGetFiles: boolean = false;
 
   @Input() transaction?: Transaction;
   @Output() returnFiles = new EventEmitter();
+  @Output() downloaded = new EventEmitter();
 
   ngOnInit(): void {
     this.getFiles();
@@ -163,6 +165,9 @@ export class UploaderComponent implements OnInit {
             });
           }
         }
+
+        this.usedGetFiles = arquivos.every((item) => Object.keys(item).length == 0) ? false : true;
+        this.downloaded.emit(this.usedGetFiles);
       });
   }
 
@@ -184,5 +189,21 @@ export class UploaderComponent implements OnInit {
 
     // Cria o File a partir do Blob
     return new File([blob], filename, { type: contentType });
+  }
+
+  downloadFile(archive: File) {
+    const fileDownload = archive;
+    const url = URL.createObjectURL(fileDownload);
+
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileDownload.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
 }
