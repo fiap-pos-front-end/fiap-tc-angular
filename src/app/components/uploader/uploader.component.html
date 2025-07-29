@@ -23,7 +23,7 @@
                 <div class="close-img" (click)="removeImg(j)">
                   <i class="pi pi-times"></i>
                 </div>
-                @if (archive.original && usedGetFiles) {
+                @if (archive.original) {
                   <div
                     class="download-bt"
                     (click)="downloadFile(archive.original)"
