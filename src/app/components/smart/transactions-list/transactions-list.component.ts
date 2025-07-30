@@ -131,7 +131,6 @@ export class TransactionsListComponent implements OnInit {
   }
 
   onExportCsvClicked() {
-    console.log('🚀 ~ TransactionsListComponent ~ onExportCsvClicked ~ this.dt:', this.dt);
     this.dt.exportCSV();
   }
 
