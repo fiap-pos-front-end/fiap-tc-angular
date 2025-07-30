@@ -18,11 +18,12 @@ export class DialogUploaderComponent {
   readonly isVisible = input.required<boolean>();
   readonly transaction = input<Transaction | undefined>(undefined);
   readonly onHide = output<void>();
-  readonly onSave = output<boolean>();
+  readonly onSave = output<number>();
   private readonly uploaderService = inject(UploaderService);
 
   archives: File[] = [];
   loading: boolean = false;
+  fileDownloaded: boolean = false;
 
   async saveTransaction() {
     this.loading = true;
@@ -30,12 +31,18 @@ export class DialogUploaderComponent {
       .uploadAttachments(this.transaction()!.id, this.archives)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.onSave.emit(this.archives.length > 0 ? true : false);
+        let typeOfMessage = this.archives.length == 0 && this.fileDownloaded ? 2 : this.archives.length > 0 ? 1 : 0;
+        this.fileDownloaded = false;
+        this.onSave.emit(typeOfMessage);
         this.loading = false;
       });
   }
 
   storeFiles(event: FileList) {
     this.archives = Array.from(event);
+  }
+
+  filesFromS3(bool: boolean) {
+    this.fileDownloaded = bool;
   }
 }

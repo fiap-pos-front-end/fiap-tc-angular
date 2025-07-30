@@ -38,6 +38,7 @@ export class UploaderComponent implements OnInit {
 
   @Input() transaction?: Transaction;
   @Output() returnFiles = new EventEmitter();
+  @Output() downloaded = new EventEmitter();
 
   ngOnInit(): void {
     this.getFiles();
@@ -163,6 +164,8 @@ export class UploaderComponent implements OnInit {
             });
           }
         }
+
+        this.downloaded.emit(arquivos.every((item) => Object.keys(item).length == 0) ? false : true);
       });
   }
 
@@ -184,5 +187,21 @@ export class UploaderComponent implements OnInit {
 
     // Cria o File a partir do Blob
     return new File([blob], filename, { type: contentType });
+  }
+
+  downloadFile(archive: File) {
+    const fileDownload = archive;
+    const url = URL.createObjectURL(fileDownload);
+
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileDownload.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
 }
