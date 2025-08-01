@@ -71,7 +71,15 @@
         </label>
       }
 
-      <input type="file" [accept]="typeAccepted" id="input-file" hidden #inputFile (change)="onSelectFile($event)" />
+      <input
+        type="file"
+        [accept]="typeAccepted"
+        id="input-file"
+        hidden
+        #inputFile
+        (click)="inputFile.value = ''"
+        (change)="onSelectFile($event)"
+      />
     </div>
   } @else {
     <p-progressSpinner></p-progressSpinner>
