@@ -1,5 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import {
   DialogTransactionFormComponent,
@@ -11,7 +12,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 import { PRIMENG_MODULES } from './imports';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface Column {
   field: string;
@@ -166,7 +166,7 @@ export class TransactionsListComponent implements OnInit {
 
   deleteTransaction(transaction: Transaction) {
     this.buildAndDisplayConfirmationDialog(
-      `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category}) do dia ${transaction.date.toLocaleDateString('pt-BR')}?`,
+      `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category?.name}) do dia ${new Date(transaction.date).toLocaleDateString('pt-BR')}?`,
       () => {
         this.transactionService
           .delete(transaction.id)
