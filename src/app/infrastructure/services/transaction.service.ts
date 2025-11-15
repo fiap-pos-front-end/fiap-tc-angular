@@ -16,14 +16,6 @@ export class TransactionService {
     return this.httpClient.get<Transaction[]>(this.transactionBaseUrl);
   }
 
-  create(transaction: Transaction): Observable<Transaction> {
-    return this.httpClient.post<Transaction>(this.transactionBaseUrl, transaction);
-  }
-
-  update(id: number, transaction: Transaction): Observable<Transaction> {
-    return this.httpClient.put<Transaction>(`${this.transactionBaseUrl}/${id}`, transaction);
-  }
-
   getById(id: number): Observable<Transaction> {
     throw new Error('Method not implemented.');
   }
