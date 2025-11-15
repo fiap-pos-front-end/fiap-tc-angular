@@ -1,11 +1,17 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import {
+  emitEvent,
+  EVENTS,
+  Transaction as TransactionShared,
+  TransactionType,
+} from '@fiap-pos-front-end/fiap-tc-shared';
+import { Transaction } from '@fiap-tc-angular/domain/entities/Transaction';
 import { CreateTransactionUseCase } from '@fiap-tc-angular/domain/usecases/CreateTransactionUseCase';
 import { DeleteTransactionUseCase } from '@fiap-tc-angular/domain/usecases/DeleteTransactionUseCase';
+import { GetAllTransactionsUseCase } from '@fiap-tc-angular/domain/usecases/GetAllTransactionsUseCase';
 import { UpdateTransactionUseCase } from '@fiap-tc-angular/domain/usecases/UpdateTransactionUseCase';
-import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
@@ -46,8 +52,8 @@ export class TransactionsListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly transactionService = inject(TransactionService);
 
+  private readonly getAllTransactionsUseCase = inject(GetAllTransactionsUseCase);
   private readonly createTransactionUseCase = inject(CreateTransactionUseCase);
   private readonly updateTransactionUseCase = inject(UpdateTransactionUseCase);
   private readonly deleteTransactionUseCase = inject(DeleteTransactionUseCase);
@@ -56,8 +62,8 @@ export class TransactionsListComponent implements OnInit {
 
   readonly cols = signal<Column[]>([]);
   readonly transactions = signal<Transaction[]>([]);
-  readonly selectedTransactions = signal<Transaction[]>([]);
-  readonly currentTransaction = signal<Transaction | undefined>(undefined);
+  readonly selectedTransactions = signal<TransactionShared[]>([]);
+  readonly currentTransaction = signal<TransactionShared | undefined>(undefined);
   readonly dialogState = signal<TransactionDialogState>({ visible: false, isEditing: false });
   readonly dialogUploaderState = signal<UploaderDialogState>({ visible: false });
 
@@ -76,8 +82,8 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    this.transactionService
-      .getAll()
+    this.getAllTransactionsUseCase
+      .execute()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => {
@@ -150,7 +156,7 @@ export class TransactionsListComponent implements OnInit {
     return colors[type] || 'info';
   }
 
-  saveTransaction(transaction: Transaction) {
+  saveTransaction(transaction: TransactionShared) {
     const operation = transaction.id
       ? this.updateTransactionUseCase.execute(transaction.id, transaction)
       : this.createTransactionUseCase.execute(transaction);
@@ -166,12 +172,12 @@ export class TransactionsListComponent implements OnInit {
     });
   }
 
-  editTransaction(transaction: Transaction) {
+  editTransaction(transaction: TransactionShared) {
     this.currentTransaction.set(transaction);
     this.dialogState.set({ visible: true, isEditing: true });
   }
 
-  deleteTransaction(transaction: Transaction) {
+  deleteTransaction(transaction: TransactionShared) {
     this.buildAndDisplayConfirmationDialog(
       `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category?.name}) do dia ${new Date(transaction.date).toLocaleDateString('pt-BR')}?`,
       () => {
@@ -206,7 +212,7 @@ export class TransactionsListComponent implements OnInit {
     });
   }
 
-  openUploadTransaction(transaction: Transaction) {
+  openUploadTransaction(transaction: TransactionShared) {
     this.dialogUploaderState.set({ visible: true });
     this.currentTransaction.set(transaction);
   }

@@ -1,3 +1,4 @@
+import { Category } from '@fiap-pos-front-end/fiap-tc-shared';
 import { TransactionType } from '../enums/TransactionType';
 
 export class Transaction {
@@ -9,6 +10,7 @@ export class Transaction {
     public readonly categoryId: number,
     public readonly userId?: number,
     public readonly attachments?: string,
+    public readonly category?: Category, // TODO: [Clean Arch] Para melhorar ainda mais, poderia ser tratada por um UseCase ou ViewModel
   ) {}
 
   // Factory method for creating NEW transactions
@@ -21,6 +23,7 @@ export class Transaction {
       categoryId: number;
       userId?: number;
       attachments?: string;
+      category?: Category;
     },
   ): Transaction {
     // DOMAIN VALIDATION (business rules)
@@ -29,7 +32,16 @@ export class Transaction {
     }
 
     // Create new entity
-    return new Transaction(id, data.amount, data.date, data.type, data.categoryId, data.userId, data.attachments);
+    return new Transaction(
+      id,
+      data.amount,
+      data.date,
+      data.type,
+      data.categoryId,
+      data.userId,
+      data.attachments,
+      data.category,
+    );
   }
 
   // Domain method: calculate impact on balance
