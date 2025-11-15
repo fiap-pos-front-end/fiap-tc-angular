@@ -1,0 +1,39 @@
+import { TransactionType } from '../enums/TransactionType';
+
+export class Transaction {
+  private constructor(
+    public readonly id: string,
+    public readonly amount: number,
+    public readonly date: Date,
+    public readonly type: TransactionType,
+    public readonly categoryId: number,
+    public readonly userId: number,
+    public readonly attachments?: string,
+  ) {}
+
+  // Factory method for creating NEW transactions
+  static create(
+    id: string,
+    data: {
+      amount: number;
+      date: Date;
+      type: TransactionType;
+      categoryId: number;
+      userId: number;
+      attachments?: string;
+    },
+  ): Transaction {
+    // DOMAIN VALIDATION (business rules)
+    if (data.amount <= 0) {
+      throw new Error('Transaction amount must be greater than zero');
+    }
+
+    // Create new entity
+    return new Transaction(id, data.amount, data.date, data.type, data.categoryId, data.userId, data.attachments);
+  }
+
+  // Domain method: calculate impact on balance
+  getBalanceImpact(): number {
+    return this.type === TransactionType.RECEITA ? this.amount : -this.amount;
+  }
+}
