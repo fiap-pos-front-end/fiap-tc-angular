@@ -20,11 +20,19 @@ export class HttpTransactionRepository implements TransactionRepository {
   }
 
   create(transaction: Transaction): Observable<Transaction> {
-    return this.httpClient.post<Transaction>(this.transactionBaseUrl, transaction);
+    const dto = TransactionMapper.fromDomainToDto(transaction);
+
+    return this.httpClient
+      .post<TransactionDTO>(this.transactionBaseUrl, dto)
+      .pipe(map((responseDto) => TransactionMapper.fromDtoToDomain(responseDto)));
   }
 
   update(id: number, transaction: Transaction): Observable<Transaction> {
-    return this.httpClient.put<Transaction>(`${this.transactionBaseUrl}/${id}`, transaction);
+    const dto = TransactionMapper.fromDomainToDto(transaction);
+
+    return this.httpClient
+      .put<TransactionDTO>(`${this.transactionBaseUrl}/${id}`, dto)
+      .pipe(map((responseDto) => TransactionMapper.fromDtoToDomain(responseDto)));
   }
 
   delete(id: number): Observable<void> {

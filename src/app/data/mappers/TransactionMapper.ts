@@ -15,4 +15,16 @@ export class TransactionMapper {
       category: transaction.category,
     });
   }
+
+  static fromDomainToDto(entity: Transaction): Partial<TransactionDTO> {
+    return {
+      id: Number(entity.id),
+      type: entity.type === TransactionType.RECEITA ? 'Receita' : 'Despesa',
+      date: entity.date.toISOString(),
+      amount: entity.amount,
+      categoryId: entity.categoryId,
+      userId: entity.userId,
+      attachments: entity.attachments,
+    };
+  }
 }
