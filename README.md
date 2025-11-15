@@ -48,22 +48,41 @@ O aplicativo estará disponível em `http://localhost:4200`.
 ## 🧱 Estrutura do Projeto
 
 ```
-src/
-├── app/
-│   ├── components/           # -- Componentes reutilizáveis
-│   │   ├── presentational/   # Componentes de apresentação (sem lógica de negócio)
-│   │   └── smart/            # Componentes inteligentes (com lógica de negócio)
-│   ├── core/                 # -- Funcionalidades essenciais da aplicação
-│   │   ├── application/      # Casos de uso e lógica de aplicação
-│   │   └── domain/           # Modelos e regras de negócio
-│   ├── infrastructure/       # -- Implementações técnicas
-│   │   ├── providers/        # Provedores de serviços
-│   │   ├── repositories/     # Implementações de repositórios
-│   │   └── services/         # Serviços de infraestrutura
-│   └── pages/                # -- Componentes de página
-├── environments/             # Configurações de ambiente
-└── assets/                   # Recursos estáticos
+src/app/
+├── domain/
+│   ├── entities/
+│   │   └── Transaction.ts                      ← Entidades ricas com validação
+│   ├── enums/
+│   │   └── TransactionType.ts                  ← RECEITA/DESPESA
+│   ├── repositories/                           ← Interfaces apenas!
+│   │   ├── TransactionRepository.ts
+│   ├── services/                               ← Interfaces apenas!
+│   │   └── IdGeneratorService.ts
+│   └── usecases/
+│       ├── CreateTransactionUseCase.ts
+│       ├── DeleteTransactionUseCase.ts
+│       ├── GetAllTransactionsUseCase.ts
+│       └── UpdateTransactionUseCase.ts
+│
+├── data/                                        ← DTOs e mappers
+│   ├── dtos/
+│   │   └── TransactionDTO.ts                    ← DTOs que recebem do backend
+│   └── mappers/
+│       └── TransactionMapper.ts                 ← DTO → Entity conversion
+│
+├── infra/                                       ← Implementações concretas de terceiros
+│   ├── repositories/
+│   │   ├── HttpTransactionRepository.ts         
+│   └── services/
+│       └── UuidIdGeneratorService.ts            
+│
+└── presentation/                                ← Apresentação
+|   ├── components/                              
+|   └── pages/                                   
+├── environments/                                ← Configurações de ambiente
+└── assets/                                      ← Recursos estáticos
 ```
+
 
 ### Onde Adicionar Novos Componentes
 
@@ -72,6 +91,18 @@ src/
 - **Páginas**: Adicione em `src/app/pages/` se for uma nova rota/página
 - **Regras "core" ou relativas ao domínio**: Adicione em `src/app/core/domain/` para novas regras de negócio
 - **Serviços**: Adicione em `src/app/infrastructure/services/` para novos serviços de infraestrutura
+
+#### Exemplo real de uso dos componentes
+
+1. Usuário preenche form → Componente captura data
+2. Componente chama UseCase.execute(data)
+3. UseCase valida → Business rules
+4. UseCase gera ID → const id = await idGenerator.generate()
+5. UseCase cria entity → Transaction.create(id, data)
+6. UseCase chama repository → repository.create(transaction)
+7. Repository retorna → Observable<Transaction>
+8. UseCase retorna → Observable<Transaction>
+9. Componente se inscreve → transaction$.subscribe()
 
 ## 📝 Extra
 

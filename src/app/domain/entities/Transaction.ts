@@ -44,6 +44,28 @@ export class Transaction {
     );
   }
 
+  static reconstitute(data: {
+    id: string;
+    amount: number;
+    date: Date;
+    type: TransactionType;
+    categoryId: number;
+    userId?: number;
+    attachments?: string;
+    category?: Category;
+  }): Transaction {
+    return new Transaction(
+      data.id,
+      data.amount,
+      data.date,
+      data.type,
+      data.categoryId,
+      data.userId,
+      data.attachments,
+      data.category,
+    );
+  }
+
   // Domain method: calculate impact on balance
   getBalanceImpact(): number {
     return this.type === TransactionType.RECEITA ? this.amount : -this.amount;

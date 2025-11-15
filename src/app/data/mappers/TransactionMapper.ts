@@ -4,7 +4,8 @@ import { TransactionDTO } from '../dtos/TransactionDTO';
 
 export class TransactionMapper {
   static fromDtoToDomain(transaction: TransactionDTO): Transaction {
-    return Transaction.create(String(transaction.id), {
+    return Transaction.reconstitute({
+      id: String(transaction.id),
       amount: transaction.amount,
       date: new Date(transaction.date),
       type: transaction.type === 'Receita' ? TransactionType.RECEITA : TransactionType.DESPESA,
