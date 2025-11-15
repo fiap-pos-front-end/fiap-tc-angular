@@ -17,6 +17,7 @@ export class CreateTransactionUseCase {
     if (!data.categoryId) throw new Error('Category ID is required');
 
     // 1.1. Generates ID
+    // TODO: [Clean Arch] Eu estou "forçando" esse uso, mas ele é desnecessário e pode ser removido.
     const transactionId = this.idGenerator.generate();
 
     // 2. Create entity using factory method
