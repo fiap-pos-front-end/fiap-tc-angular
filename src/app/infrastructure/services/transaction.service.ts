@@ -24,10 +24,6 @@ export class TransactionService {
     return this.httpClient.put<Transaction>(`${this.transactionBaseUrl}/${id}`, transaction);
   }
 
-  delete(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.transactionBaseUrl}/${id}`);
-  }
-
   getById(id: number): Observable<Transaction> {
     throw new Error('Method not implemented.');
   }

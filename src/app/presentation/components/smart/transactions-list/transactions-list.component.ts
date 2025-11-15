@@ -3,6 +3,7 @@ import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angul
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
 import { CreateTransactionUseCase } from '@fiap-tc-angular/domain/usecases/CreateTransactionUseCase';
+import { DeleteTransactionUseCase } from '@fiap-tc-angular/domain/usecases/DeleteTransactionUseCase';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -47,6 +48,7 @@ export class TransactionsListComponent implements OnInit {
   private readonly transactionService = inject(TransactionService);
 
   private readonly createTransactionUseCase = inject(CreateTransactionUseCase);
+  private readonly deleteTransactionUseCase = inject(DeleteTransactionUseCase);
 
   @ViewChild('dt') dt!: Table;
 
@@ -188,8 +190,8 @@ export class TransactionsListComponent implements OnInit {
     this.buildAndDisplayConfirmationDialog(
       `Você tem certeza que deseja deletar a transação de ${transaction.amount.toString()} (${transaction.category?.name}) do dia ${new Date(transaction.date).toLocaleDateString('pt-BR')}?`,
       () => {
-        this.transactionService
-          .delete(transaction.id)
+        this.deleteTransactionUseCase
+          .execute(transaction.id)
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => this.loadTransactions(),
@@ -205,7 +207,9 @@ export class TransactionsListComponent implements OnInit {
 
     this.buildAndDisplayConfirmationDialog('Você tem certeza que deseja deletar as transações selecionadas?', () => {
       Promise.all(
-        selectedTransactions.map((transaction) => firstValueFrom(this.transactionService.delete(transaction.id))),
+        selectedTransactions.map((transaction) =>
+          firstValueFrom(this.deleteTransactionUseCase.execute(transaction.id)),
+        ),
       )
         .then(() => {
           this.loadTransactions();
