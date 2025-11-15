@@ -1,22 +1,40 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
-import { TransactionService } from '@fiap-tc-angular/infrastructure';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { emitEvent, EVENTS, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
+import { Transaction } from '@fiap-tc-angular/domain/entities/Transaction';
+import { TransactionRepository } from '@fiap-tc-angular/domain/repositories/TransactionRepository';
+import { GetAllTransactionsUseCase } from '@fiap-tc-angular/domain/usecases/GetAllTransactionsUseCase';
+import { HttpTransactionRepository } from '@fiap-tc-angular/infra/repositories/HttpTransactionRepository';
+import { TRANSACTION_REPOSITORY_TOKEN } from '@fiap-tc-angular/infra/tokens/TransactionRepository';
 import { MessageService } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { Tag } from 'primeng/tag';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-statement',
   imports: [DataView, Tag, CurrencyPipe, DatePipe],
-  providers: [MessageService],
+  providers: [
+    MessageService,
+
+    // Infra
+    { provide: TRANSACTION_REPOSITORY_TOKEN, useClass: HttpTransactionRepository },
+
+    // Use Cases
+    {
+      provide: GetAllTransactionsUseCase,
+      useFactory: (transactionRepository: TransactionRepository) => {
+        return new GetAllTransactionsUseCase(transactionRepository);
+      },
+      deps: [TRANSACTION_REPOSITORY_TOKEN],
+    },
+  ],
   templateUrl: './statement-page.component.html',
 })
 export class StatementComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(MessageService);
-  private readonly transactionService = inject(TransactionService);
+  private readonly getAllTransactionsUseCase = inject(GetAllTransactionsUseCase);
 
   readonly TransactionType = TransactionType;
   readonly transactions = signal<Transaction[]>([]);
@@ -26,8 +44,8 @@ export class StatementComponent implements OnInit {
   }
 
   private loadTransactions() {
-    this.transactionService
-      .getAll()
+    this.getAllTransactionsUseCase
+      .execute()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (transactionsList) => {
