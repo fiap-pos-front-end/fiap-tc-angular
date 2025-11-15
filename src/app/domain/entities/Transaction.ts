@@ -7,7 +7,7 @@ export class Transaction {
     public readonly date: Date,
     public readonly type: TransactionType,
     public readonly categoryId: number,
-    public readonly userId: number,
+    public readonly userId?: number,
     public readonly attachments?: string,
   ) {}
 
@@ -19,7 +19,7 @@ export class Transaction {
       date: Date;
       type: TransactionType;
       categoryId: number;
-      userId: number;
+      userId?: number;
       attachments?: string;
     },
   ): Transaction {

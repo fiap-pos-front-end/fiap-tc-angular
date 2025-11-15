@@ -1,4 +1,4 @@
 export enum TransactionType {
-  RECEITA = 'RECEITA',
-  DESPESA = 'DESPESA',
+  RECEITA = 'Receita',
+  DESPESA = 'Despesa',
 }

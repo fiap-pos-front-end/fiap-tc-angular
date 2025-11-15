@@ -22,3 +22,8 @@ export interface TransactionRepository {
   create(transaction: Transaction): Observable<Transaction>;
   delete(id: number): Observable<void>;
 }
+
+// To Be Done
+// update(transaction: Transaction): Observable<Transaction>;
+// getById(id: number): Observable<Transaction>;
+// getByDateRange(startDate: Date, endDate: Date): Observable<Transaction[]>;

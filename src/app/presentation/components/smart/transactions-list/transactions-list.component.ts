@@ -2,15 +2,16 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { emitEvent, EVENTS, Transaction, TransactionType } from '@fiap-pos-front-end/fiap-tc-shared';
-import {
-  DialogTransactionFormComponent,
-  DialogUploaderComponent,
-  TransactionsListHeaderToolbarComponent,
-} from '@fiap-tc-angular/components';
+import { CreateTransactionUseCase } from '@fiap-tc-angular/domain/usecases/CreateTransactionUseCase';
 import { TransactionService } from '@fiap-tc-angular/infrastructure';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
+import {
+  DialogTransactionFormComponent,
+  DialogUploaderComponent,
+  TransactionsListHeaderToolbarComponent,
+} from '../../presentational';
 import { PRIMENG_MODULES } from './imports';
 
 interface Column {
@@ -44,6 +45,8 @@ export class TransactionsListComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transactionService = inject(TransactionService);
+
+  private readonly createTransactionUseCase = inject(CreateTransactionUseCase);
 
   @ViewChild('dt') dt!: Table;
 
@@ -149,19 +152,36 @@ export class TransactionsListComponent implements OnInit {
   }
 
   saveTransaction(transaction: Transaction) {
-    const operation = transaction.id
-      ? this.transactionService.update(Number(transaction.id), transaction)
-      : this.transactionService.create(transaction);
+    // TODO: assim que acabar o refactoring, voltar o ternário de operation
+    if (transaction.id) {
+      this.transactionService
+        .update(Number(transaction.id), transaction)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.loadTransactions();
+            this.hideTransactionDialog();
+            this.showSuccessMessage(`Transação ${transaction.id ? 'atualizada' : 'criada'} com sucesso`);
+            this.currentTransaction.set(undefined);
+          },
+          error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
+        });
 
-    operation.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.loadTransactions();
-        this.hideTransactionDialog();
-        this.showSuccessMessage(`Transação ${transaction.id ? 'atualizada' : 'criada'} com sucesso`);
-        this.currentTransaction.set(undefined);
-      },
-      error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
-    });
+      return;
+    }
+
+    this.createTransactionUseCase
+      .execute(transaction)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.loadTransactions();
+          this.hideTransactionDialog();
+          this.showSuccessMessage(`Transação ${transaction.id ? 'atualizada' : 'criada'} com sucesso`);
+          this.currentTransaction.set(undefined);
+        },
+        error: (error) => this.showErrorMessage('Erro ao salvar transação', error.message),
+      });
   }
 
   deleteTransaction(transaction: Transaction) {

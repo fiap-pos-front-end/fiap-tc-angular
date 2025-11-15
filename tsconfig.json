@@ -21,10 +21,9 @@
       "@fiap-tc-angular/components": ["./src/app/components/index.ts"],
 
       // Novos (Clean Arch)
-      "@fiap-tc-angular/data": ["./src/app/data/"],
-      "@fiap-tc-angular/domain": ["./src/app/domain/"],
-      "@fiap-tc-angular/infra": ["./src/app/infra/"],
-      "@fiap-tc-angular/presentation": ["./src/app/presentation/"]
+      "@fiap-tc-angular/data/*": ["./src/app/data/*"],
+      "@fiap-tc-angular/domain/*": ["./src/app/domain/*"],
+      "@fiap-tc-angular/infra/*": ["./src/app/infra/*"]
     }
   },
   "angularCompilerOptions": {
