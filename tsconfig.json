@@ -16,10 +16,13 @@
     "target": "ES2022",
     "module": "ES2022",
     "paths": {
-      "@fiap-tc-angular/core/application": ["./src/app/core/application/index.ts"],
-      "@fiap-tc-angular/core/domain": ["./src/app/core/domain/index.ts"],
       "@fiap-tc-angular/infrastructure": ["./src/app/infrastructure/index.ts"],
-      "@fiap-tc-angular/components": ["./src/app/components/index.ts"]
+      "@fiap-tc-angular/components": ["./src/app/components/index.ts"],
+
+      // Novos (Clean Arch)
+      "@fiap-tc-angular/data/*": ["./src/app/data/*"],
+      "@fiap-tc-angular/domain/*": ["./src/app/domain/*"],
+      "@fiap-tc-angular/infra/*": ["./src/app/infra/*"]
     }
   },
   "angularCompilerOptions": {
