@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   emitEvent,
@@ -47,6 +47,7 @@ interface UploaderDialogState {
   ],
   providers: [MessageService, ConfirmationService, AsyncPipe],
   templateUrl: './transactions-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionsListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);

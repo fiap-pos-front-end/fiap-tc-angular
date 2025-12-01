@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { Component, Output, Input, EventEmitter, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, Output, Input, EventEmitter, OnInit, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { UploaderService } from '@fiap-tc-angular/infrastructure';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -10,6 +10,7 @@ import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ArchiveItem {
+  id: string;
   source: SafeHtml;
   name: string;
   type: string;
@@ -23,6 +24,7 @@ interface ArchiveItem {
   providers: [MessageService, Toast],
   templateUrl: './uploader.component.html',
   styleUrl: './uploader.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploaderComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -65,6 +67,7 @@ export class UploaderComponent implements OnInit {
             });
           } else {
             this.arrObjArchive.push({
+              id: crypto.randomUUID(),
               source: this.formatTypes(file.type).string == 'pdf' ? this.getSafeHtml(result) : result,
               name: file.name,
               type: file.type,
@@ -153,6 +156,7 @@ export class UploaderComponent implements OnInit {
         for (let file of arquivos) {
           if (file.data) {
             this.arrObjArchive.push({
+              id: crypto.randomUUID(),
               source:
                 this.formatTypes(file.contentType).id_type == 2
                   ? this.sanitizer.bypassSecurityTrustResourceUrl(`data:${file.contentType};base64,${file.data}`)
@@ -204,4 +208,9 @@ export class UploaderComponent implements OnInit {
       URL.revokeObjectURL(url);
     }
   }
+
+  trackByArchive(index: number, item: any) {
+    return item.id;
+  }
+
 }
