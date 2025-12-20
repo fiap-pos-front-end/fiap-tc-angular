@@ -139,6 +139,14 @@ npm run docs
    - Factory Method para criação de objetos
    - Dependency Injection para inversão de controle
 
+4. **Performance da aplicação**
+   - Otimização na detecção de mudanças utilizando ChangeDetectionStrategy.OnPush, reduzindo re-renderizações desnecessárias.
+   - Implementação de Lazy Loading para diminuir o tempo de carregamento inicial da aplicação.
+   - Utilização de Signals para uma gestão de estado local mais eficiente e performática.
+   - Aplicação do trackBy em listas para evitar recriação desnecessária do DOM.
+   - Uso de Observables para lidar com operações assíncronas de forma reativa e segura.
+
+
 > _Infelizmente, alguns padrões de projeto precisaram ser removidos pois não foi possível fazer a injeção de dependências funcionar perfeitamente (especialmente quando o token precisava ser injetado no bootstrap da aplicação)._
 
 ### Boas Práticas
