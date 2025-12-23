@@ -2,7 +2,7 @@ export interface TransactionDTO {
   id: number;
   type: 'Receita' | 'Despesa';
   date: string;
-  amount: number;
+  amount: string;
   attachments: string;
   categoryId: number;
   userId: number;

@@ -69,11 +69,13 @@ export class StatementComponent implements OnInit {
 
   private calculateBalance(transactions: Transaction[]): number {
     return transactions.reduce((acc, transaction) => {
+      const amount = Number(transaction.amount);
+
       if (transaction.type === TransactionType.RECEITA) {
-        return acc + transaction.amount;
+        return acc + amount;
       }
 
-      return acc - transaction.amount;
+      return acc - amount;
     }, 0);
   }
 

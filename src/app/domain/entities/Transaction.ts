@@ -4,7 +4,7 @@ import { TransactionType } from '../enums/TransactionType';
 export class Transaction {
   private constructor(
     public readonly id: string,
-    public readonly amount: number,
+    public readonly amount: string,
     public readonly date: Date,
     public readonly type: TransactionType,
     public readonly categoryId: number,
@@ -17,7 +17,7 @@ export class Transaction {
   static create(
     id: string,
     data: {
-      amount: number;
+      amount: string;
       date: Date;
       type: TransactionType;
       categoryId: number;
@@ -27,7 +27,7 @@ export class Transaction {
     },
   ): Transaction {
     // DOMAIN VALIDATION (business rules)
-    if (data.amount <= 0) {
+    if (Number(data.amount) <= 0) {
       throw new Error('Transaction amount must be greater than zero');
     }
 
@@ -46,7 +46,7 @@ export class Transaction {
 
   static reconstitute(data: {
     id: string;
-    amount: number;
+    amount: string;
     date: Date;
     type: TransactionType;
     categoryId: number;
@@ -68,6 +68,6 @@ export class Transaction {
 
   // Domain method: calculate impact on balance
   getBalanceImpact(): number {
-    return this.type === TransactionType.RECEITA ? this.amount : -this.amount;
+    return this.type === TransactionType.RECEITA ? Number(this.amount) : -Number(this.amount);
   }
 }
